@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buoni Regalo - Hair&amp;Barber Revolution</title>
+  <meta name="description" content="Regala un'esperienza unica da Hair&amp;Barber Revolution. Richiedi un buono regalo per trattamenti o accredito." />
+    <!-- Google tag (gtag.js) — Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', { analytics_storage: 'denied' });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9R0TDFCKJ"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-E9R0TDFCKJ');
+    </script>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { black: '#0d0d0d', white: '#fafafa' },
+          fontFamily: {
+            serif: ["'Cormorant Garamond'", "serif"],
+            sans:  ["'Jost'", "'Segoe UI'", "system-ui", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Jost', 'Segoe UI', system-ui, sans-serif; background: #fafafa; color: #0d0d0d; }
+
+    #mobile-menu         { display: none; }
+    #mobile-menu.open    { display: flex; overflow-y: auto; }
+
+    /* ═══════════════════════════════════════════════
+       BUONO REGALO: il buono si compone mentre si compila
+    ═══════════════════════════════════════════════ */
+    .gv-layout { display: grid; grid-template-columns: 1fr; gap: clamp(2.5rem, 5vw, 5rem); align-items: start; }
+    @media (min-width: 1024px) {
+      .gv-layout { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+      .gv-aside { position: sticky; top: 6.5rem; }
+    }
+
+    /* Palco del buono: prospettiva per inclinazione e rotazione */
+    .gv-stage { perspective: 1400px; }
+    .gv-tilt {
+      transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      transition: transform .6s var(--ease);
+      transform-style: preserve-3d;
+    }
+    .gv-stage.is-tracking .gv-tilt { transition: transform .12s linear; }
+    .gv-flip {
+      position: relative; aspect-ratio: 1.62 / 1;
+      transform-style: preserve-3d;
+      transition: transform 1s var(--ease-inout);
+    }
+    .gv-flip.is-flipped { transform: rotateY(180deg); }
+    .gv-face {
+      position: absolute; inset: 0; overflow: hidden;
+      -webkit-backface-visibility: hidden; backface-visibility: hidden;
+      box-shadow: 0 30px 60px -28px rgba(13,13,13,.55), 0 2px 6px rgba(13,13,13,.12);
+    }
+
+    /* Il buono è bianco con dettagli neri su entrambi i lati, come la versione da stampare
+       (poco inchiostro). Le proporzioni ricalcano le immagini generate in fondo alla pagina. */
+    .gv-face { background: #fff; color: #0d0d0d; }
+    .gv-face::after {
+      content: ""; position: absolute; inset: 2.1%; border: 1px solid #0d0d0d; pointer-events: none;
+    }
+    .gv-front { display: block; }
+    .gv-pole {
+      position: absolute; top: 2.1%; bottom: 2.1%; left: 2.1%; width: 4.6%;
+      overflow: hidden; border-right: 1px solid #0d0d0d;
+    }
+    .gv-pole::before {
+      content: ""; position: absolute; left: -60%; right: -60%; top: -60px; bottom: -60px;
+      background: repeating-linear-gradient(-45deg, #0d0d0d 0 5px, #fff 5px 13px);
+      animation: poleUp 3s linear infinite;
+    }
+    @keyframes poleUp { to { transform: translateY(-18.4px); } }
+    .gv-front-body {
+      position: absolute; top: 9.6%; bottom: 9.6%; left: 11%; right: 6.4%;
+      display: flex; flex-direction: column;
+    }
+    .gv-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-shrink: 0; }
+    .gv-logo { height: 17.7cqw; width: auto; margin-top: -1.5cqw; }
+    .gv-kicker { font-size: 1.45cqw; letter-spacing: .3em; text-transform: uppercase; color: #555; text-align: right; line-height: 1.6; }
+    .gv-gift {
+      flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; overflow: hidden;
+      font-family: 'Cormorant Garamond', serif; font-weight: 600; line-height: 1.12; padding: 1.2cqw 0;
+    }
+    .gv-gift-empty { font-size: 4.6cqw; color: #9a9a9a; font-style: italic; font-weight: 400; }
+    .gv-amount { font-size: 13.5cqw; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .gv-items { list-style: none; display: flex; flex-direction: column; font-size: 5.2cqw; }
+    .gv-items li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: inkIn .7s var(--ease) both; }
+    .gv-flow { font-size: 4.2cqw; line-height: 1.22; animation: inkIn .6s var(--ease) both; }
+    .gv-value { margin-top: .8cqw; font-family: 'Jost', sans-serif; font-weight: 400; font-size: 1.45cqw; letter-spacing: .16em; text-transform: uppercase; color: #555; flex-shrink: 0; }
+    @keyframes inkIn { from { opacity: 0; transform: translateY(.4em); } to { opacity: 1; transform: none; } }
+
+    .gv-lines { display: grid; grid-template-columns: 1fr 1fr; gap: 0 4cqw; flex-shrink: 0; }
+    .gv-line { display: flex; align-items: baseline; gap: 1.2cqw; position: relative; padding-bottom: .9cqw; min-width: 0; }
+    .gv-line::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: #bdbdbd; }
+    .gv-line::before {
+      content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; z-index: 1;
+      background: #0d0d0d; transform: scaleX(0); transform-origin: left; transition: transform .8s var(--ease);
+    }
+    .gv-line.is-filled::before { transform: scaleX(1); }
+    .gv-lab { font-size: 1.35cqw; letter-spacing: .24em; text-transform: uppercase; color: #555; flex-shrink: 0; }
+    .gv-val {
+      font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 3.6cqw; line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1;
+    }
+    .gv-val:empty::before { content: attr(data-ph); color: #9a9a9a; font-style: italic; font-weight: 400; }
+    .gv-val.ink { animation: inkIn .6s var(--ease) both; }
+
+    /* Timbro "Pronto da regalare" quando il buono è completo (solo nell'anteprima, non si stampa) */
+    .gv-seal {
+      position: absolute; right: 2cqw; top: 36%;
+      width: 15cqw; aspect-ratio: 1; border-radius: 50%;
+      border: 1px solid #0d0d0d; display: flex; align-items: center; justify-content: center; text-align: center;
+      font-size: 1.25cqw; letter-spacing: .18em; text-transform: uppercase; line-height: 1.5; background: rgba(255,255,255,.85);
+      opacity: 0; transform: scale(1.6) rotate(-30deg); pointer-events: none;
+      transition: opacity .35s ease, transform .7s var(--ease);
+    }
+    .gv-seal::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; border: 1px dashed rgba(13,13,13,.5); }
+    .gv-flip.is-complete .gv-seal { opacity: 1; transform: rotate(-12deg); }
+
+    /* Riflesso che segue il puntatore */
+    .gv-shine {
+      position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .5s ease; z-index: 2;
+      background: radial-gradient(520px circle at var(--sx, 50%) var(--sy, 50%), rgba(13,13,13,.05), transparent 50%);
+    }
+    .gv-stage.is-tracking .gv-shine { opacity: 1; }
+
+    /* Retro: dedica, firma e indirizzo del salone */
+    .gv-back { transform: rotateY(180deg); }
+    .gv-back-body { position: absolute; top: 9.6%; bottom: 11%; left: 6.4%; right: 6.4%; display: flex; flex-direction: column; }
+    .gv-back .gv-kicker { text-align: left; }
+    .gv-dedica {
+      flex: 1; display: flex; align-items: center; min-height: 0; overflow: hidden;
+      font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400;
+      font-size: 4.6cqw; line-height: 1.25; padding: 1cqw 0;
+    }
+    .gv-dedica.is-empty { color: #9a9a9a; }
+    .gv-sign { font-size: 1.45cqw; letter-spacing: .2em; text-transform: uppercase; color: #555; padding-bottom: 2.2cqw; border-bottom: 1px solid #bdbdbd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gv-info { margin-top: 2cqw; font-size: 1.45cqw; line-height: 1.6; color: #333; }
+    .gv-back-pole {
+      position: absolute; left: 2.1%; right: 2.1%; bottom: 2.1%; height: 2.4%;
+      border-top: 1px solid #0d0d0d;
+      background: repeating-linear-gradient(90deg, #0d0d0d 0 1.2cqw, #fff 1.2cqw 2.6cqw);
+    }
+
+    .gv-card-wrap { container-type: inline-size; }
+
+    /* Sotto il buono: avanzamento e "gira" */
+    .gv-under { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+    .gv-progress { display: flex; align-items: center; gap: .9rem; font-size: .82rem; }
+    .gv-steps { display: flex; gap: 4px; }
+    .gv-steps i { width: 1.6rem; height: 3px; background: rgba(13,13,13,.15); position: relative; overflow: hidden; }
+    .gv-steps i::after { content: ""; position: absolute; inset: 0; background: #0d0d0d; transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
+    .gv-steps i.done::after { transform: scaleX(1); }
+    .gv-flip-btn { display: inline-flex; align-items: center; gap: .55rem; font-size: .74rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; padding: .5rem 0; }
+    .gv-flip-btn svg { transition: transform .8s var(--ease-inout); }
+    .gv-flip-btn[aria-pressed="true"] svg { transform: rotate(180deg); }
+
+    /* ── Modulo ── */
+    .gv-form fieldset { border: 0; padding: 0 0 2.25rem; margin: 0 0 2.25rem; border-bottom: 1px solid rgba(13,13,13,.12); }
+    .gv-form fieldset:last-of-type { border-bottom: 0; margin-bottom: 1.5rem; padding-bottom: 0; }
+    .gv-form legend { display: flex; align-items: baseline; gap: .8rem; margin-bottom: 1.4rem; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(1.6rem, 2.8vw, 2.1rem); line-height: 1.1; }
+    .gv-form legend .gv-check {
+      width: 1.35rem; height: 1.35rem; flex-shrink: 0; align-self: center; border: 1px solid #0d0d0d; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center; transition: background-color .4s ease, color .4s ease;
+      color: transparent;
+    }
+    .gv-form fieldset.is-done legend .gv-check { background: #0d0d0d; color: #fafafa; }
+    .gv-form fieldset.is-done legend .gv-check svg { animation: inkIn .5s var(--ease) both; }
+    .gv-field { margin-bottom: 1.25rem; }
+    .gv-field:last-child { margin-bottom: 0; }
+    .req { font-weight: 400; opacity: .55; }
+    .field-textarea {
+      width: 100%; padding: 14px; border: 1px solid rgba(13,13,13,.32); border-radius: 0; outline: none;
+      font-size: .95rem; font-family: inherit; background: #fff; resize: vertical; min-height: 110px; color: #0d0d0d;
+      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+    .field-textarea:focus { border-color: #0d0d0d; box-shadow: 0 0 0 3px rgba(13,13,13,.1); }
+    .field-hint { font-size: .78rem; opacity: .6; margin-top: .45rem; display: flex; justify-content: space-between; gap: 1rem; }
+    .two { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+    @media (min-width: 560px) { .two { grid-template-columns: 1fr 1fr; } }
+
+    /* Scelta Donna / Uomo e tipo di regalo: tessere grandi */
+    .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .tile { position: relative; }
+    .tile input { position: absolute; opacity: 0; pointer-events: none; }
+    .tile span {
+      display: flex; align-items: center; justify-content: center; gap: .6rem; min-height: 3.4rem; padding: .6rem 1rem;
+      border: 1px solid rgba(13,13,13,.32); background: #fff; cursor: pointer; text-align: center;
+      font-size: .78rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase;
+      transition: background-color .35s ease, color .35s ease, border-color .35s ease;
+    }
+    .tile span:hover { border-color: #0d0d0d; }
+    .tile input:checked + span { background: #0d0d0d; color: #fafafa; border-color: #0d0d0d; }
+    .tile input:focus-visible + span { outline: 2px solid #0d0d0d; outline-offset: 3px; }
+
+    /* Servizi da regalare: pillole selezionabili */
+    .chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .chip {
+      display: inline-flex; align-items: baseline; gap: .55rem; padding: .6rem .95rem; text-align: left;
+      border: 1px solid rgba(13,13,13,.28); background: #fff; cursor: pointer; font-size: .88rem; line-height: 1.3;
+      transition: background-color .3s ease, color .3s ease, border-color .3s ease, transform .2s ease;
+      animation: inkIn .5s var(--ease) both; animation-delay: calc(var(--i, 0) * 22ms);
+    }
+    .chip small { font-size: .74rem; opacity: .6; white-space: nowrap; }
+    .chip:hover { border-color: #0d0d0d; }
+    .chip[aria-pressed="true"] { background: #0d0d0d; color: #fafafa; border-color: #0d0d0d; }
+    .chip[aria-pressed="true"] small { opacity: .75; }
+    .chip:active { transform: scale(.97); }
+    .chips-empty { font-size: .9rem; opacity: .6; padding: 1rem 0; }
+
+    .amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-bottom: .75rem; }
+    @media (min-width: 560px) { .amounts { grid-template-columns: repeat(5, 1fr); } }
+    .amount-btn {
+      min-height: 3.2rem; border: 1px solid rgba(13,13,13,.28); background: #fff; cursor: pointer;
+      font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 1.35rem;
+      transition: background-color .3s ease, color .3s ease, border-color .3s ease;
+    }
+    .amount-btn:hover { border-color: #0d0d0d; }
+    .amount-btn[aria-pressed="true"] { background: #0d0d0d; color: #fafafa; border-color: #0d0d0d; }
+    .euro-input { position: relative; }
+    .euro-input::before { content: "€"; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); opacity: .55; }
+    .euro-input .field-input { padding-left: 2rem; }
+
+    .gv-panel[hidden] { display: none; }
+    .gv-panel { animation: inkIn .5s var(--ease) both; }
+
+    .gv-total { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 1rem 1.1rem; margin-top: 1.25rem; border: 1px solid rgba(13,13,13,.14); background: #f1f1f0; }
+    .gv-total[hidden] { display: none; }
+    .gv-total-lab { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; opacity: .65; }
+    .gv-total-val { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.4rem; }
+    .gv-total-note { font-size: .78rem; opacity: .65; margin-top: .35rem; }
+
+    #submit-btn:disabled { opacity: .35; cursor: not-allowed; }
+    #submit-btn:disabled::before { display: none; }
+    .gv-missing { font-size: .85rem; margin-top: .9rem; min-height: 1.3em; opacity: .7; text-align: center; }
+
+    /* Finestra di conferma */
+    #popup-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(13,13,13,.6); align-items: center; justify-content: center; padding: 1rem; }
+    #popup-overlay.open { display: flex; }
+    #popup-box { background: #fafafa; border: 1px solid #0d0d0d; max-width: 36rem; width: 100%; max-height: 92vh; overflow-y: auto; padding: clamp(1.5rem, 4vw, 2.5rem); position: relative; }
+    .gv-export { margin: 0 0 1.75rem; }
+    .gv-export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .gv-export figure { margin: 0; }
+    .gv-export canvas { display: block; width: 100%; height: auto; border: 1px solid rgba(13,13,13,.18); background: #fff; }
+    .gv-export figcaption { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; opacity: .6; margin-top: .45rem; }
+    .pop-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-bottom: 1rem; }
+    .pop-imgs img { width: 100%; height: auto; border: 1px solid rgba(13,13,13,.18); background: #fff; animation: inkIn .6s var(--ease) both; }
+    .pop-imgs img + img { animation-delay: .12s; }
+    .pop-msg { margin-bottom: 1.5rem; font-size: .88rem; }
+    .pop-msg summary { cursor: pointer; font-weight: 500; padding: .35rem 0; }
+    .pop-msg #popup-message { margin: .6rem 0 0; }
+    .pop-steps { list-style: none; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+    .pop-steps li { display: grid; grid-template-columns: 2rem 1fr; gap: .9rem; align-items: start; }
+    .pop-n { width: 2rem; height: 2rem; margin-top: .6rem; border: 1px solid #0d0d0d; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 1.05rem; transition: background-color .4s ease, color .4s ease; }
+    .pop-steps li.done .pop-n { background: #0d0d0d; color: #fafafa; }
+    .pop-hint { font-size: .82rem; opacity: .7; margin-top: .45rem; line-height: 1.5; }
+    .pop-cancel { display: block; margin: .25rem auto 0; font-size: .8rem; text-decoration: underline; text-underline-offset: 3px; opacity: .7; cursor: pointer; padding: .4rem; }
+    #popup-message { white-space: pre-wrap; font-size: .9rem; line-height: 1.7; margin-bottom: 1.75rem; max-height: 14rem; overflow-y: auto; padding: 1.25rem; background: rgba(13,13,13,.04); border: 1px solid rgba(13,13,13,.1); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .gv-pole::before { animation: none; }
+      .gv-flip { transition-duration: .01ms; }
+    }
+  </style>
+  <link rel="stylesheet" href="hbr.css" />
+  <script src="hbr-sub.js"></script>
+  <script src="SERVIZI_DONNA.js"></script>
+  <script src="SERVIZI_UOMO.js"></script>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header id="navbar" class="fixed top-0 left-0 right-0 z-40 bg-black py-3 border-b border-white/10">
+  <div class="container mx-auto px-6 flex items-center justify-between">
+    <a href="index.html" class="focus:outline-none">
+      <img src="logo-white-small.png" alt="Hair&amp;Barber Revolution" style="height:3.25rem;width:auto;object-fit:contain;"
+        onerror="this.src='logo.png';this.style.filter='brightness(0) invert(1)';" />
+    </a>
+
+    <nav class="hidden xl:flex items-center" style="gap:1.75rem;">
+      <a href="index.html"                          class="text-xs uppercase tracking-[0.15em] font-medium text-white hover:opacity-60 transition-opacity">Home</a>
+      <a href="index.html#about"                    class="text-xs uppercase tracking-[0.15em] font-medium text-white hover:opacity-60 transition-opacity">Chi siamo</a>
+      <a href="index.html#services"                 class="text-xs uppercase tracking-[0.15em] font-medium text-white hover:opacity-60 transition-opacity">Servizi</a>
+      <a href="index.html#gallery"                  class="text-xs uppercase tracking-[0.15em] font-medium text-white hover:opacity-60 transition-opacity">Galleria</a>
+      <a href="index.html#booking"                  class="text-xs uppercase tracking-[0.15em] font-medium text-white hover:opacity-60 transition-opacity">Prenota</a>
+      <a href="novita.html"                         class="text-xs uppercase tracking-[0.15em] font-medium text-white hover:opacity-60 transition-opacity">Novità</a>
+      <a href="buoni.html"                          class="text-xs uppercase tracking-[0.15em] font-medium text-white border-b border-white pb-0.5">Buoni</a>
+      <a href="promozioni.html"                     class="text-xs uppercase tracking-[0.15em] font-medium text-white hover:opacity-60 transition-opacity">Promozioni</a>
+      <a href="recensioni.html"                     class="text-xs uppercase tracking-[0.15em] font-medium text-white hover:opacity-60 transition-opacity">Recensioni</a>
+      <a href="index.html#contact"                  class="text-xs uppercase tracking-[0.15em] font-medium text-white hover:opacity-60 transition-opacity">Contatti</a>
+    </nav>
+
+    <div class="hidden xl:flex items-center" style="gap:1rem;">
+      <a href="https://www.facebook.com/hairbarberrevolution/" target="_blank" rel="noreferrer" class="text-white/60 hover:text-white transition-colors" aria-label="Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/hair.barberrevolution/" target="_blank" rel="noreferrer" class="text-white/60 hover:text-white transition-colors" aria-label="Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+      </a>
+    </div>
+
+    <button onclick="openMenu()" class="xl:hidden text-white focus:outline-none p-2 -mr-2" aria-label="Apri menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- MOBILE MENU — scrollabile, tutto visibile -->
+<div id="mobile-menu" class="fixed inset-0 z-50 bg-black flex-col items-center" style="overflow-y:auto;padding-top:4.5rem;padding-bottom:2rem;">
+  <button onclick="closeMenu()" class="absolute top-4 right-5 text-white p-2 focus:outline-none" aria-label="Chiudi menu">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+  <img src="logo-white-small.png" alt="Hair&amp;Barber Revolution" style="height:4rem;width:auto;object-fit:contain;margin-bottom:1.75rem;opacity:.9;"
+    onerror="this.src='logo.png';this.style.filter='brightness(0) invert(1)';" />
+  <nav class="flex flex-col items-center" style="gap:1.1rem;">
+    <a href="index.html"          onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Home</a>
+    <a href="index.html#about"    onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Chi siamo</a>
+    <a href="index.html#services" onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Servizi</a>
+    <a href="index.html#gallery"  onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Galleria</a>
+    <a href="index.html#booking"  onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Prenota</a>
+    <a href="novita.html"         onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Novità</a>
+    <a href="buoni.html"          onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white border-b border-white pb-0.5">Buoni</a>
+    <a href="promozioni.html"     onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Promozioni</a>
+    <a href="recensioni.html"     onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Recensioni</a>
+    <a href="index.html#contact"  onclick="closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Contatti</a>
+  </nav>
+  <div class="flex" style="gap:1.5rem;margin-top:2rem;">
+    <a href="https://www.facebook.com/hairbarberrevolution/" target="_blank" rel="noreferrer" class="text-white">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/hair.barberrevolution/" target="_blank" rel="noreferrer" class="text-white">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="container mx-auto">
+    <p class="page-eyebrow">Hair&amp;Barber Revolution</p>
+    <h1 class="page-title">Buoni Regalo</h1>
+    <p class="page-sub">
+      Regala un'esperienza di bellezza unica. Componi il buono qui sotto: lo vedi prendere forma mentre scrivi, poi lo richiedi al salone su WhatsApp.
+    </p>
+  </div>
+</div>
+
+<!-- BUONO + MODULO -->
+<main class="px-6" style="padding-top:clamp(3rem,6vw,5.5rem);padding-bottom:clamp(4rem,8vw,7rem);">
+  <div class="container mx-auto gv-layout">
+
+    <!-- Il buono, che si aggiorna in tempo reale -->
+    <div class="gv-aside" data-reveal>
+      <div class="gv-stage" id="gv-stage">
+        <div class="gv-card-wrap">
+          <div class="gv-tilt" id="gv-tilt">
+            <div class="gv-flip" id="gv-flip" role="img" aria-label="Anteprima del buono regalo">
+
+              <div class="gv-face gv-front">
+                <div class="gv-pole" aria-hidden="true"></div>
+                <div class="gv-front-body">
+                  <div class="gv-top">
+                    <img class="gv-logo" src="logo-small.png" alt="" width="720" height="474" />
+                    <p class="gv-kicker">Buono<br>regalo</p>
+                  </div>
+                  <div class="gv-gift" id="gv-gift">
+                    <span class="gv-gift-empty">Scegli il regalo</span>
+                  </div>
+                  <div class="gv-lines">
+                    <div class="gv-line" id="gv-line-to"><span class="gv-lab">Per</span><span class="gv-val" id="gv-to" data-ph="chi lo riceve"></span></div>
+                    <div class="gv-line" id="gv-line-from"><span class="gv-lab">Da</span><span class="gv-val" id="gv-from" data-ph="chi lo regala"></span></div>
+                  </div>
+                  <div class="gv-seal" aria-hidden="true">Pronto<br>da<br>regalare</div>
+                </div>
+                <div class="gv-shine" aria-hidden="true"></div>
+              </div>
+
+              <div class="gv-face gv-back">
+                <div class="gv-back-body">
+                  <p class="gv-kicker">Dedica</p>
+                  <p class="gv-dedica is-empty" id="gv-dedica">Qui comparirà il tuo messaggio.</p>
+                  <p class="gv-sign" id="gv-sign">Hair&amp;Barber Revolution</p>
+                  <p class="gv-info">Valido presso Hair&amp;Barber Revolution, Via Fornacetta 7, Costa Masnaga (LC)<br>Prenotazioni: Veruska 333 135 5200, Max 338 158 3431</p>
+                </div>
+                <div class="gv-back-pole" aria-hidden="true"></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gv-under">
+        <div class="gv-progress">
+          <div class="gv-steps" aria-hidden="true"><i data-step="0"></i><i data-step="1"></i><i data-step="2"></i><i data-step="3"></i></div>
+          <span id="gv-progress-text" aria-live="polite">Iniziamo</span>
+        </div>
+        <button type="button" class="gv-flip-btn" id="gv-flip-btn" aria-pressed="false" onclick="toggleFlip()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <span id="gv-flip-label">Gira il buono</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modulo -->
+    <form id="buono-form" class="gv-form" novalidate data-reveal style="--d:2;">
+
+      <fieldset id="fs-from">
+        <legend><span class="gv-check" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Chi regala</legend>
+        <div class="two">
+          <div class="gv-field">
+            <label for="b-nome" class="field-label">Il tuo nome e cognome <span class="req">*</span></label>
+            <input id="b-nome" type="text" placeholder="Es. Mario Rossi" autocomplete="name" class="field-input" aria-describedby="b-nome-hint" />
+            <p class="field-hint" id="b-nome-hint">Serve solo per il messaggio WhatsApp al salone: non compare sul buono.</p>
+          </div>
+          <div class="gv-field">
+            <label for="b-mittente" class="field-label">Nome sul buono <span class="req">*</span></label>
+            <input id="b-mittente" type="text" placeholder="Es. Anna Bianchi" class="field-input" />
+          </div>
+        </div>
+        <p class="field-hint" style="margin-top:.6rem;">Il nome sul buono è quello che leggerà chi lo riceve: puoi scrivere anche "Mamma e papà".</p>
+      </fieldset>
+
+      <fieldset id="fs-to">
+        <legend><span class="gv-check" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Chi lo riceve</legend>
+        <div class="gv-field">
+          <label for="b-destinatario" class="field-label">Nome di chi riceve il buono <span class="req">*</span></label>
+          <input id="b-destinatario" type="text" placeholder="Es. Giulia Verdi" class="field-input" />
+        </div>
+        <div class="gv-field">
+          <span class="field-label" id="sesso-label">Reparto <span class="req">*</span></span>
+          <div class="tiles" role="radiogroup" aria-labelledby="sesso-label">
+            <label class="tile"><input type="radio" name="b-sesso-r" value="Donna" /><span>Donna</span></label>
+            <label class="tile"><input type="radio" name="b-sesso-r" value="Uomo" /><span>Uomo</span></label>
+          </div>
+          <input type="hidden" id="b-sesso" value="" />
+        </div>
+      </fieldset>
+
+      <fieldset id="fs-gift">
+        <legend><span class="gv-check" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Il regalo</legend>
+        <div class="gv-field">
+          <span class="field-label" id="mode-label">Cosa vuoi regalare</span>
+          <div class="tiles" role="radiogroup" aria-labelledby="mode-label">
+            <label class="tile"><input type="radio" name="b-mode" value="trattamento" checked /><span>Un trattamento</span></label>
+            <label class="tile"><input type="radio" name="b-mode" value="accredito" /><span>Un importo</span></label>
+          </div>
+        </div>
+
+        <div class="gv-panel" id="section-trattamento">
+          <span class="field-label" id="chips-label">Scegli uno o più trattamenti <span class="req">*</span></span>
+          <div class="chips" id="trattamenti-container" role="group" aria-labelledby="chips-label">
+            <p class="chips-empty">Scegli prima il reparto, Donna o Uomo, per vedere i trattamenti.</p>
+          </div>
+        </div>
+
+        <div class="gv-panel" id="section-accredito" hidden>
+          <span class="field-label" id="amount-label">Importo del buono <span class="req">*</span></span>
+          <div class="amounts" role="group" aria-labelledby="amount-label">
+            <button type="button" class="amount-btn" data-amount="25" aria-pressed="false">€25</button>
+            <button type="button" class="amount-btn" data-amount="50" aria-pressed="false">€50</button>
+            <button type="button" class="amount-btn" data-amount="75" aria-pressed="false">€75</button>
+            <button type="button" class="amount-btn" data-amount="100" aria-pressed="false">€100</button>
+            <button type="button" class="amount-btn" data-amount="150" aria-pressed="false">€150</button>
+          </div>
+          <label for="b-accredito" class="field-label" style="margin-top:1rem;">Oppure scrivi un importo</label>
+          <div class="euro-input">
+            <input id="b-accredito" type="text" inputmode="numeric" placeholder="Es. 60" class="field-input" maxlength="4" />
+          </div>
+        </div>
+
+        <div class="gv-total" id="buoni-total-wrap" hidden>
+          <div>
+            <div class="gv-total-lab">Valore stimato</div>
+            <p class="gv-total-note" id="buoni-total-note" hidden></p>
+          </div>
+          <span class="gv-total-val" id="buoni-total-amount" aria-live="polite"></span>
+        </div>
+      </fieldset>
+
+      <fieldset id="fs-dedica">
+        <legend><span class="gv-check" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>La dedica</legend>
+        <label for="b-dedica" class="field-label">Messaggio <span class="req">(facoltativo)</span></label>
+        <textarea id="b-dedica" class="field-textarea" maxlength="220" placeholder="Scrivi un messaggio personale per chi riceve il buono..."></textarea>
+        <p class="field-hint"><span>Scrivendo, il buono si gira e mostra la dedica sul retro.</span><span id="dedica-count">0/220</span></p>
+      </fieldset>
+
+      <!-- Le immagini vere del buono, quelle che arrivano al salone e si stampano -->
+      <div class="gv-export" aria-labelledby="export-label">
+        <p class="field-label" id="export-label">Il tuo buono, fronte e retro</p>
+        <div class="gv-export-grid">
+          <figure><canvas id="exp-front" width="2100" height="1296" role="img" aria-label="Fronte del buono"></canvas><figcaption>Fronte</figcaption></figure>
+          <figure><canvas id="exp-back" width="2100" height="1296" role="img" aria-label="Retro del buono"></canvas><figcaption>Retro</figcaption></figure>
+        </div>
+        <p class="field-hint">Sono le immagini che invierai al salone, pronte da stampare su entrambi i lati.</p>
+      </div>
+
+      <button type="submit" id="submit-btn" disabled class="btn btn-dark btn-block" style="min-height:3.6rem;font-size:.82rem;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Richiedi il tuo buono
+      </button>
+      <p class="gv-missing" id="gv-missing" aria-live="polite"></p>
+      <p class="text-center" style="font-size:.78rem;opacity:.6;margin-top:.4rem;">
+        Verrai reindirizzato a WhatsApp con il riepilogo del buono.
+      </p>
+    </form>
+
+  </div>
+</main>
+
+<!-- CONFERMA -->
+<div id="popup-overlay" onclick="closePopup(event)" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+  <div id="popup-box">
+    <h3 id="popup-title" class="font-serif" style="font-weight:600;font-size:1.9rem;line-height:1.1;margin-bottom:.6rem;">Invia il buono</h3>
+    <p style="font-size:.92rem;opacity:.7;margin-bottom:1.25rem;">
+      Il buono arriva a <strong id="popup-dest-name"></strong> in due passaggi: prima il messaggio, poi le immagini fronte e retro.
+    </p>
+    <div class="pop-imgs">
+      <img id="pop-front" alt="Fronte del buono" />
+      <img id="pop-back" alt="Retro del buono" />
+    </div>
+    <details class="pop-msg">
+      <summary>Testo del messaggio</summary>
+      <div id="popup-message"></div>
+    </details>
+    <ol class="pop-steps">
+      <li>
+        <span class="pop-n">1</span>
+        <div>
+          <button type="button" id="popup-confirm" onclick="confirmSend()" class="btn btn-dark btn-block">Apri WhatsApp</button>
+          <p class="pop-hint" id="step1-hint">Si apre la chat con il messaggio già scritto: premi invia.</p>
+        </div>
+      </li>
+      <li>
+        <span class="pop-n">2</span>
+        <div>
+          <button type="button" id="popup-images" onclick="sendImages()" class="btn btn-ghost-dark btn-block">Invia le immagini</button>
+          <p class="pop-hint" id="step2-hint"></p>
+        </div>
+      </li>
+    </ol>
+    <button type="button" onclick="cancelPopup()" class="pop-cancel">Annulla</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-black text-white border-t border-white/10 px-6" style="padding-top:2.5rem;padding-bottom:2.5rem;">
+  <div class="container mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center" style="gap:1.5rem;margin-bottom:1.5rem;">
+      <img src="logo-white-small.png" alt="Hair&amp;Barber Revolution" style="height:3rem;width:auto;object-fit:contain;"
+        onerror="this.src='logo.png';this.style.filter='brightness(0) invert(1)';" />
+      <div class="flex flex-wrap justify-center" style="gap:.75rem;">
+        <a href="https://www.facebook.com/hairbarberrevolution/" target="_blank" rel="noreferrer" class="text-white/50 hover:text-white transition-colors" aria-label="Facebook">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/hair.barberrevolution/" target="_blank" rel="noreferrer" class="text-white/50 hover:text-white transition-colors" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+        </a>
+        <a href="https://g.page/r/CX5BLAXF88S0EBM/review" target="_blank" rel="noreferrer"
+           class="flex items-center text-white/50 hover:text-white transition-colors" style="gap:.35rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;" aria-label="Recensioni Google">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Recensioni Google
+        </a>
+        <a href="https://www.facebook.com/hairbarberrevolution/reviews/" target="_blank" rel="noreferrer"
+           class="flex items-center text-white/50 hover:text-white transition-colors" style="gap:.35rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;" aria-label="Recensioni Facebook">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          Recensioni Facebook
+        </a>
+      </div>
+      <div class="text-white/40 text-xs tracking-widest text-center md:text-right" style="line-height:1.8;">
+        Hair&amp;Barber Revolution, via Fornacetta 7 Costa Masnaga (LC), 23845<br>
+        &copy; <span id="footer-year"></span> HAIR&amp;BARBER REVOLUTION DI TOMA VERUSKA. TUTTI I DIRITTI RISERVATI.<br>
+        P.IVA 03667090132<br>
+        <a href="privacy.html" class="text-white/30 hover:text-white/60 transition-colors underline underline-offset-2">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+'use strict';
+
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+/* ── Menu mobile ── */
+function openMenu() {
+  var m = document.getElementById('mobile-menu');
+  m.classList.remove('closing');
+  m.classList.add('open');
+}
+function closeMenu() {
+  var m = document.getElementById('mobile-menu');
+  m.classList.add('closing');
+  setTimeout(function() { m.classList.remove('open','closing'); }, 400);
+}
+
+/* ════════════════════════
+   LISTINO
+════════════════════════ */
+var SERVICES = {
+  donna: window.SERVIZI_DONNA_DATA || [],
+  uomo:  window.SERVIZI_UOMO_DATA  || []
+};
+
+var $ = function(id) { return document.getElementById(id); };
+var MODE = 'trattamento';
+var currentSesso = '';
+var chosen = [];
+var reduceMotion = window.HBR ? window.HBR.reduceMotion : false;
+
+function esc(s) {
+  return String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"');
+}
+function val(id) { var el = $(id); return el ? el.value.trim() : ''; }
+
+/* ════════════════════════
+   SCELTE DEL MODULO
+════════════════════════ */
+Array.prototype.forEach.call(document.querySelectorAll('input[name="b-sesso-r"]'), function(r) {
+  r.addEventListener('change', function() {
+    currentSesso = r.value;
+    $('b-sesso').value = r.value;
+    chosen = [];
+    renderChips();
+    update();
+  });
+});
+
+Array.prototype.forEach.call(document.querySelectorAll('input[name="b-mode"]'), function(r) {
+  r.addEventListener('change', function() {
+    MODE = r.value;
+    $('section-trattamento').hidden = MODE !== 'trattamento';
+    $('section-accredito').hidden  = MODE !== 'accredito';
+    update();
+  });
+});
+
+function renderChips() {
+  var box = $('trattamenti-container');
+  if (!currentSesso) {
+    box.innerHTML = '<p class="chips-empty">Scegli prima il reparto, Donna o Uomo, per vedere i trattamenti.</p>';
+    return;
+  }
+  var list = SERVICES[currentSesso.toLowerCase()] || [];
+  if (!list.length) {
+    box.innerHTML = '<p class="chips-empty">Il listino non è disponibile in questo momento: scegli "Un importo".</p>';
+    return;
+  }
+  box.innerHTML = list.map(function(s, i) {
+    var on = chosen.indexOf(s.nome) !== -1;
+    return '<button type="button" class="chip" style="--i:' + i + '" aria-pressed="' + on + '" data-nome="' + esc(s.nome) + '">'
+      + esc(s.nome) + ' <small>' + esc(s.prezzo) + '</small></button>';
+  }).join('');
+}
+
+$('trattamenti-container').addEventListener('click', function(e) {
+  var chip = e.target.closest('.chip');
+  if (!chip) return;
+  var nome = chip.getAttribute('data-nome');
+  var i = chosen.indexOf(nome);
+  if (i === -1) chosen.push(nome); else chosen.splice(i, 1);
+  chip.setAttribute('aria-pressed', i === -1 ? 'true' : 'false');
+  update();
+});
+
+/* Importi rapidi e importo libero */
+Array.prototype.forEach.call(document.querySelectorAll('.amount-btn'), function(b) {
+  b.addEventListener('click', function() {
+    $('b-accredito').value = b.getAttribute('data-amount');
+    update();
+  });
+});
+$('b-accredito').addEventListener('input', function() {
+  this.value = this.value.replace(/[^0-9]/g, '');
+  update();
+});
+
+['b-nome','b-mittente','b-destinatario'].forEach(function(id) {
+  $(id).addEventListener('input', update);
+});
+
+/* Dedica */
+$('b-dedica').addEventListener('input', function() {
+  $('dedica-count').textContent = this.value.length + '/220';
+  update();
+});
+$('b-dedica').addEventListener('focus', function() { setFlip(true); });
+['b-nome','b-mittente','b-destinatario','b-accredito'].forEach(function(id) {
+  $(id).addEventListener('focus', function() { setFlip(false); });
+});
+document.addEventListener('change', function(e) {
+  if (e.target.name === 'b-sesso-r' || e.target.name === 'b-mode') setFlip(false);
+});
+$('trattamenti-container').addEventListener('click', function() { setFlip(false); });
+
+/* ════════════════════════
+   ROTAZIONE DEL BUONO
+════════════════════════ */
+var flipped = false;
+function setFlip(on) {
+  if (flipped === on) return;
+  flipped = on;
+  $('gv-flip').classList.toggle('is-flipped', on);
+  $('gv-flip-btn').setAttribute('aria-pressed', on ? 'true' : 'false');
+  $('gv-flip-label').textContent = on ? 'Mostra il fronte' : 'Gira il buono';
+}
+function toggleFlip() { setFlip(!flipped); }
+
+/* ════════════════════════
+   INCLINAZIONE CON IL PUNTATORE
+════════════════════════ */
+(function() {
+  var stage = $('gv-stage'), tilt = $('gv-tilt');
+  if (reduceMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  var raf = 0, px = 0, py = 0;
+  stage.addEventListener('pointermove', function(e) {
+    var r = stage.getBoundingClientRect();
+    px = (e.clientX - r.left) / r.width; py = (e.clientY - r.top) / r.height;
+    stage.classList.add('is-tracking');
+    if (raf) return;
+    raf = requestAnimationFrame(function() {
+      raf = 0;
+      tilt.style.setProperty('--ry', ((px - .5) * 12).toFixed(2) + 'deg');
+      tilt.style.setProperty('--rx', ((.5 - py) * 9).toFixed(2) + 'deg');
+      stage.style.setProperty('--sx', (px * 100).toFixed(1) + '%');
+      stage.style.setProperty('--sy', (py * 100).toFixed(1) + '%');
+    });
+  });
+  stage.addEventListener('pointerleave', function() {
+    stage.classList.remove('is-tracking');
+    tilt.style.setProperty('--ry', '0deg');
+    tilt.style.setProperty('--rx', '0deg');
+  });
+})();
+
+/* ════════════════════════
+   STIMA DEL VALORE
+════════════════════════ */
+function parseEuro(priceStr) {
+  var amounts = [];
+  var re = /€(\d+)(?:,(\d{2}))?/g, m;
+  while ((m = re.exec(priceStr)) !== null) {
+    amounts.push(parseFloat(m[1]) + (m[2] ? parseFloat('0.' + m[2]) : 0));
+  }
+  if (!amounts.length) return null;
+  return {
+    min: amounts[0],
+    max: amounts[amounts.length - 1],
+    isRange: amounts.length > 1 || priceStr.indexOf('da') !== -1,
+    isPartial: priceStr.indexOf('+') !== -1
+  };
+}
+function fmt(n) { return '€' + n.toFixed(2).replace('.', ','); }
+
+function estimate() {
+  if (MODE === 'accredito') {
+    var v = parseInt(val('b-accredito'), 10);
+    return v > 0 ? { text: '€' + v + ',00', note: '' } : null;
+  }
+  if (!chosen.length) return null;
+  var services = SERVICES[currentSesso.toLowerCase()] || [];
+  var totalMin = 0, totalMax = 0, hasRange = false, hasPartial = false, hasUnknown = false;
+  chosen.forEach(function(nome) {
+    var svc = services.filter(function(s) { return s.nome === nome; })[0];
+    var p = svc ? parseEuro(svc.prezzo) : null;
+    if (!p) { hasUnknown = true; return; }
+    totalMin += p.min; totalMax += p.max;
+    if (p.isRange) hasRange = true;
+    if (p.isPartial) hasPartial = true;
+  });
+  if (hasUnknown && totalMin === 0) return { text: 'Da preventivo', note: '' };
+  if (hasRange || hasPartial || hasUnknown) {
+    var t = 'da ' + fmt(totalMin);
+    if (totalMax !== totalMin && !hasUnknown && !hasPartial) t += ' a ' + fmt(totalMax);
+    return { text: t, note: 'Stima sul prezzo minimo: alcuni servizi richiedono preventivo' };
+  }
+  return { text: fmt(totalMin), note: '' };
+}
+
+/* ════════════════════════
+   AGGIORNAMENTO DEL BUONO
+════════════════════════ */
+function setLine(id, lineId, text) {
+  var el = $(id), was = el.textContent;
+  if (was === text) return;
+  el.textContent = text;
+  if (!was && text && !reduceMotion) {
+    el.classList.remove('ink'); void el.offsetWidth; el.classList.add('ink');
+  }
+  $(lineId).classList.toggle('is-filled', !!text);
+}
+
+var lastGiftKey = '';
+var shownAmount = 0;
+function countTo(el, to) {
+  if (reduceMotion) { el.textContent = '€' + to; shownAmount = to; return; }
+  var from = shownAmount, start = performance.now(), dur = 520;
+  function step(now) {
+    var t = Math.min(1, (now - start) / dur), e = 1 - Math.pow(1 - t, 3);
+    el.textContent = '€' + Math.round(from + (to - from) * e);
+    if (t < 1) requestAnimationFrame(step); else shownAmount = to;
+  }
+  requestAnimationFrame(step);
+}
+
+function renderGift() {
+  var gift = $('gv-gift');
+  if (MODE === 'accredito') {
+    var v = parseInt(val('b-accredito'), 10) || 0;
+    if (!v) { lastGiftKey = ''; shownAmount = 0; gift.innerHTML = '<span class="gv-gift-empty">Scegli l\'importo</span>'; return; }
+    if (lastGiftKey !== 'amount') {
+      gift.innerHTML = '<span class="gv-amount" id="gv-amount">€0</span><span class="gv-value">Da spendere in salone</span>';
+      lastGiftKey = 'amount'; shownAmount = 0;
+    }
+    countTo($('gv-amount'), v);
+    return;
+  }
+  var key = chosen.join('|');
+  if (key === lastGiftKey) return;
+  var prev = lastGiftKey ? lastGiftKey.split('|') : [];
+  lastGiftKey = key;
+  if (!chosen.length) { gift.innerHTML = '<span class="gv-gift-empty">Scegli il regalo</span>'; return; }
+  var est = estimate();
+  var names = chosen.map(shortName);
+  var body = names.length <= 4
+    ? '<ul class="gv-items">' + names.map(function(n, i) {
+        var isNew = prev.indexOf(chosen[i]) === -1;
+        return '<li' + (isNew ? '' : ' style="animation:none"') + '>' + esc(n) + '</li>';
+      }).join('') + '</ul>'
+    : '<p class="gv-flow">' + names.map(esc).join(' · ') + '</p>';
+  gift.innerHTML = body + (est ? '<span class="gv-value">Valore ' + esc(est.text) + '</span>' : '');
+}
+
+/* ════════════════════════
+   IMMAGINI DA STAMPARE (Canvas 2100x1296)
+════════════════════════ */
+var EW = 2100, EH = 1296, INK = '#0d0d0d', GREY = '#555555', LIGHT = '#bdbdbd';
+var logoImg = new Image(); logoImg.src = 'logo-small.png';
+var assetsReady = Promise.all([
+  new Promise(function(r) { if (logoImg.complete) r(); else { logoImg.onload = r; logoImg.onerror = r; } }),
+  document.fonts ? Promise.all([
+    document.fonts.load('600 80px "Cormorant Garamond"'),
+    document.fonts.load('italic 400 80px "Cormorant Garamond"'),
+    document.fonts.load('400 30px "Jost"'),
+    document.fonts.load('500 30px "Jost"')
+  ]).catch(function() {}) : Promise.resolve()
+]);
+var CG = function(s, w) { return (w || 600) + ' ' + s + 'px "Cormorant Garamond", serif'; };
+var CGI = function(s) { return 'italic 400 ' + s + 'px "Cormorant Garamond", serif'; };
+var JO = function(s, w) { return (w || 400) + ' ' + s + 'px "Jost", sans-serif'; };
+
+function spacedW(ctx, t, sp) { var w = 0; for (var i = 0; i < t.length; i++) w += ctx.measureText(t[i]).width + sp; return t.length ? w - sp : 0; }
+function spaced(ctx, t, x, y, sp, align) {
+  var sx = align === 'right' ? x - spacedW(ctx, t, sp) : x;
+  for (var i = 0; i < t.length; i++) { ctx.fillText(t[i], sx, y); sx += ctx.measureText(t[i]).width + sp; }
+}
+function ellipsize(ctx, t, maxW) {
+  if (ctx.measureText(t).width <= maxW) return t;
+  while (t.length && ctx.measureText(t + '...').width > maxW) t = t.slice(0, -1);
+  return t.replace(/\s+$/, '') + '...';
+}
+function wrap(ctx, t, maxW) {
+  var out = [];
+  String(t).split('\n').forEach(function(par) {
+    var line = '';
+    par.split(' ').forEach(function(w) {
+      var test = line ? line + ' ' + w : w;
+      if (ctx.measureText(test).width <= maxW || !line) line = test; else { out.push(line); line = w; }
+    });
+    out.push(line);
+  });
+  return out.map(function(l) { return ellipsize(ctx, l, maxW); });
+}
+function wrapFit(ctx, t, fontFn, maxW, maxH, lh, max, min) {
+  for (var s = max; s >= min; s -= 2) {
+    ctx.font = fontFn(s);
+    var lines = wrap(ctx, t, maxW);
+    if (lines.length * s * lh <= maxH) return { s: s, lines: lines };
+  }
+  ctx.font = fontFn(min);
+  var all = wrap(ctx, t, maxW), n = Math.max(1, Math.floor(maxH / (min * lh)));
+  var cut = all.slice(0, n);
+  if (all.length > n) cut[n - 1] = ellipsize(ctx, cut[n - 1] + '...', maxW).replace(/\.{6}$/, '...');
+  return { s: min, lines: cut };
+}
+function frame(ctx) {
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, EW, EH);
+  ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.strokeRect(44, 44, EW - 88, EH - 88);
+  ctx.fillStyle = INK; ctx.textBaseline = 'alphabetic';
+}
+
+function drawFront(cv) {
+  var ctx = cv.getContext('2d'); frame(ctx);
+  ctx.save(); ctx.beginPath(); ctx.rect(44, 44, 96, EH - 88); ctx.clip();
+  ctx.strokeStyle = INK; ctx.lineWidth = 10;
+  for (var k = -200; k < EH + 200; k += 26) { ctx.beginPath(); ctx.moveTo(30, k + 120); ctx.lineTo(160, k); ctx.stroke(); }
+  ctx.restore();
+  ctx.fillStyle = INK; ctx.fillRect(139, 44, 3, EH - 88);
+
+  var x0 = 232, x1 = EW - 134, y0 = 124, y1 = EH - 124;
+  if (logoImg.naturalWidth) { var lh = 372, lw = lh * logoImg.naturalWidth / logoImg.naturalHeight; ctx.drawImage(logoImg, x0 - 6, y0 - 31, lw, lh); }
+  ctx.font = JO(30, 500); ctx.fillStyle = GREY;
+  spaced(ctx, 'BUONO', x1, y0 + 30, 9, 'right'); spaced(ctx, 'REGALO', x1, y0 + 78, 9, 'right');
+
+  var colW = (x1 - x0 - 84) / 2;
+  [['PER', val('b-destinatario')], ['DA', val('b-mittente')]].forEach(function(p, i) {
+    var cx = x0 + i * (colW + 84);
+    ctx.font = JO(28, 500); ctx.fillStyle = GREY; spaced(ctx, p[0], cx, y1 - 26, 7);
+    var lw = spacedW(ctx, p[0], 7) + 26, maxW = colW - lw, s = 76;
+    ctx.fillStyle = INK;
+    for (; s > 44; s -= 2) { ctx.font = CG(s); if (ctx.measureText(p[1]).width <= maxW) break; }
+    ctx.font = CG(s); ctx.fillText(ellipsize(ctx, p[1], maxW), cx + lw, y1 - 24);
+    ctx.fillStyle = p[1] ? INK : LIGHT; ctx.fillRect(cx, y1 - (p[1] ? 4 : 2), colW, p[1] ? 4 : 2);
+  });
+
+  var gTop = y0 + 366, gBot = y1 - 140, gH = gBot - gTop, gW = x1 - x0;
+  ctx.fillStyle = INK;
+  var est = estimate();
+  var valueText = MODE === 'accredito' ? 'DA SPENDERE IN SALONE' : (est ? 'VALORE ' + est.text.toUpperCase() : '');
+  var valueH = valueText ? 64 : 0;
+  if (MODE === 'accredito') {
+    var v = parseInt(val('b-accredito'), 10) || 0;
+    var top = gTop + (gH - (230 + valueH)) / 2;
+    ctx.font = CG(284); ctx.fillText('€' + v, x0 - 8, top + 230);
+    ctx.font = JO(30); ctx.fillStyle = GREY; spaced(ctx, valueText, x0, top + 230 + valueH, 5);
+    return;
+  }
+  var names = chosen.map(shortName), lines, s, lhF;
+  if (names.length <= 4) {
+    lhF = 1.12;
+    for (s = 110; s >= 46; s -= 2) {
+      ctx.font = CG(s);
+      var fitsW = names.every(function(n) { return ctx.measureText(n).width <= gW; });
+      if (fitsW && names.length * s * lhF + valueH <= gH) break;
+    }
+    s = Math.max(s, 46); ctx.font = CG(s);
+    lines = names.map(function(n) { return ellipsize(ctx, n, gW); });
+  } else {
+    lhF = 1.22;
+    var r = wrapFit(ctx, names.join(' · '), function(z) { return CG(z); }, gW, gH - valueH, lhF, 90, 34);
+    s = r.s; lines = r.lines; ctx.font = CG(s);
+  }
+  var blockH = lines.length * s * lhF + valueH, y = gTop + (gH - blockH) / 2 + s * 0.9;
+  lines.forEach(function(l) { ctx.fillText(l, x0, y); y += s * lhF; });
+  if (valueText) { ctx.font = JO(30); ctx.fillStyle = GREY; spaced(ctx, valueText, x0, y - s * lhF + valueH, 5); }
+}
+
+function drawBack(cv) {
+  var ctx = cv.getContext('2d'); frame(ctx);
+  var by = EH - 44 - 31;
+  ctx.fillRect(44, by, EW - 88, 3);
+  for (var x = 44; x < EW - 44; x += 55) ctx.fillRect(x, by, Math.min(25, EW - 44 - x), 31);
+
+  var x0 = 134, x1 = EW - 134, y0 = 124, yb = EH - 143, w = x1 - x0;
+  ctx.font = JO(30, 500); ctx.fillStyle = GREY; spaced(ctx, 'DEDICA', x0, y0 + 30, 9);
+
+  ctx.fillStyle = '#333333';
+  ['Valido presso Hair&Barber Revolution, Via Fornacetta 7, Costa Masnaga (LC)',
+   'Prenotazioni: Veruska 333 135 5200, Max 338 158 3431'].forEach(function(t, i) {
+    ctx.font = JO(30); ctx.fillText(ellipsize(ctx, t, w), x0, yb - 48 + i * 48);
+  });
+  var rule = yb - 48 - 30 - 40;
+  ctx.fillStyle = LIGHT; ctx.fillRect(x0, rule, w, 2);
+  var mitt = val('b-mittente');
+  ctx.font = JO(30, 500); ctx.fillStyle = GREY;
+  spaced(ctx, ellipsize(ctx, (mitt ? 'DA ' + mitt : 'HAIR&BARBER REVOLUTION').toUpperCase(), w - 300), x0, rule - 44, 6);
+
+  var dedica = val('b-dedica'), dest = val('b-destinatario');
+  var text = dedica || (dest ? 'Per ' + dest : '');
+  if (!text) return;
+  var top = y0 + 80, h = rule - 44 - 50 - top;
+  var r = wrapFit(ctx, text, CGI, w, h, 1.25, 96, 40);
+  ctx.font = CGI(r.s); ctx.fillStyle = INK;
+  var yy = top + (h - r.lines.length * r.s * 1.25) / 2 + r.s * 0.95;
+  r.lines.forEach(function(l) { ctx.fillText(l, x0, yy); yy += r.s * 1.25; });
+}
+
+function drawExports() {
+  return assetsReady.then(function() { drawFront($('exp-front')); drawBack($('exp-back')); });
+}
+var exportT = null;
+function scheduleExport() { clearTimeout(exportT); exportT = setTimeout(drawExports, 250); }
+function shortName(n) { return n.replace(/\s*\(.*?\)\s*/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+/* ════════════════════════
+   RIDIMENSIONAMENTO TESTI ANTEPRIMA
+════════════════════════ */
+function fitGift() {
+  var gift = $('gv-gift');
+  var target = gift.querySelector('.gv-items, .gv-flow');
+  if (!target) return;
+  target.style.fontSize = '';
+  var cs = getComputedStyle(gift);
+  var avail = gift.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  var value = gift.querySelector('.gv-value');
+  var s = parseFloat(getComputedStyle(target).fontSize), min = s * 0.4;
+  function overflows() {
+    var h = target.offsetHeight + (value ? value.offsetHeight + parseFloat(getComputedStyle(value).marginTop) : 0);
+    if (h > avail + 1) return true;
+    return Array.prototype.some.call(target.querySelectorAll('li'), function(li) { return li.scrollWidth > li.clientWidth + 1; });
+  }
+  while (overflows() && s > min) { s -= 1; target.style.fontSize = s + 'px'; }
+}
+function fitLine(el) {
+  el.style.fontSize = '';
+  var s = parseFloat(getComputedStyle(el).fontSize), min = s * 0.6;
+  while (el.scrollWidth > el.clientWidth + 1 && s > min) { s -= 0.5; el.style.fontSize = s + 'px'; }
+}
+function fitDedica() {
+  var d = $('gv-dedica'), span = d.firstChild;
+  if (!span || !span.style) return;
+  d.style.fontSize = '';
+  var cs = getComputedStyle(d);
+  var avail = d.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  var s = parseFloat(cs.fontSize), min = s * 0.45;
+  while (span.offsetHeight > avail + 1 && s > min) { s -= 0.5; d.style.fontSize = s + 'px'; }
+}
+function fitAll() { fitGift(); fitLine($('gv-to')); fitLine($('gv-from')); fitDedica(); }
+if ('ResizeObserver' in window) new ResizeObserver(function() { fitAll(); }).observe($('gv-flip'));
+
+function update() {
+  var nome = val('b-nome'), mittente = val('b-mittente'), dest = val('b-destinatario'), dedica = val('b-dedica');
+
+  setLine('gv-to', 'gv-line-to', dest);
+  setLine('gv-from', 'gv-line-from', mittente);
+  renderGift();
+
+  var d = $('gv-dedica');
+  var backText = dedica || (dest ? 'Per ' + dest : '');
+  d.innerHTML = '<span>' + esc(backText || 'Qui comparirà il tuo messaggio.') + '</span>';
+  d.classList.toggle('is-empty', !backText);
+  $('gv-sign').textContent = mittente ? 'Da ' + mittente : 'Hair&Barber Revolution';
+  fitAll();
+  scheduleExport();
+
+  var est = estimate();
+  $('buoni-total-wrap').hidden = !est;
+  if (est) {
+    $('buoni-total-amount').textContent = est.text;
+    $('buoni-total-note').textContent = est.note;
+    $('buoni-total-note').hidden = !est.note;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.amount-btn'), function(b) {
+    b.setAttribute('aria-pressed', MODE === 'accredito' && b.getAttribute('data-amount') === val('b-accredito') ? 'true' : 'false');
+  });
+
+  var giftOk = MODE === 'trattamento' ? chosen.length > 0 : (parseInt(val('b-accredito'), 10) > 0);
+  var steps = [
+    { el: 'fs-from',   ok: !!(nome && mittente) },
+    { el: 'fs-to',     ok: !!(dest && currentSesso) },
+    { el: 'fs-gift',   ok: giftOk },
+    { el: 'fs-dedica', ok: !!dedica }
+  ];
+  var done = 0;
+  steps.forEach(function(s, i) {
+    $(s.el).classList.toggle('is-done', s.ok);
+    document.querySelector('.gv-steps [data-step="' + i + '"]').classList.toggle('done', s.ok);
+    if (s.ok) done++;
+  });
+
+  var valid = !!(nome && mittente && dest && currentSesso && giftOk);
+  $('submit-btn').disabled = !valid;
+  $('gv-flip').classList.toggle('is-complete', valid);
+
+  var missing = [];
+  if (!nome) missing.push('il tuo nome');
+  if (!mittente) missing.push('il nome sul buono');
+  if (!dest) missing.push('chi lo riceve');
+  if (!currentSesso) missing.push('il reparto');
+  if (!giftOk) missing.push(MODE === 'trattamento' ? 'un trattamento' : 'l\'importo');
+  $('gv-missing').textContent = valid ? '' : 'Mancano: ' + missing.join(', ') + '.';
+  $('gv-progress-text').textContent = valid
+    ? (dedica ? 'Buono completo' : 'Pronto, la dedica è facoltativa')
+    : (done ? done + ' di 4 parti' : 'Iniziamo');
+}
+
+/* ════════════════════════
+   INVIO WHATSAPP CON IMMAGINI FRONTE E RETRO
+════════════════════════ */
+var pendingWhatsappUrl = '';
+var popupOpener = null;
+var pendingSalon = '';
+
+function slug(s) {
+  return (s || 'buono').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'buono';
+}
+function canvasFile(canvas, name) {
+  return new Promise(function(res) {
+    canvas.toBlob(function(blob) { res(new File([blob], name, { type: 'image/png' })); }, 'image/png');
+  });
+}
+function canShareFiles() {
+  try {
+    var probe = new File([new Blob(['x'], { type: 'image/png' })], 'x.png', { type: 'image/png' });
+    return !!(navigator.canShare && navigator.canShare({ files: [probe] }));
+  } catch (e) { return false; }
+}
+
+/* ════════════════════════
+   INVIO DIRETTO WHATSAPP + DOWNLOAD/CONDIVISIONE
+════════════════════════ */
+function slug(s) {
+  return (s || 'buono').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'buono';
+}
+
+function canvasFile(canvas, name) {
+  return new Promise(function(res) {
+    canvas.toBlob(function(blob) { res(new File([blob], name, { type: 'image/png' })); }, 'image/png');
+  });
+}
+
+$('buono-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if ($('submit-btn').disabled) return;
+
+  var nome = val('b-nome'), mittente = val('b-mittente'), destinatario = val('b-destinatario');
+  var sesso = val('b-sesso'), dedica = val('b-dedica');
+  var phone = sesso === 'Donna' ? '393331355200' : '393381583431';
+  var nomeDestinatario = sesso === 'Donna' ? 'Veruska' : 'Max';
+
+  var trattamentoText = MODE === 'trattamento'
+    ? 'Trattamento: ' + chosen.join(', ')
+    : 'Importo: ' + val('b-accredito') + '€';
+
+  var msg = 'Ciao ' + nomeDestinatario + ', sono ' + nome + ',\n'
+    + 'vorrei richiedere un buono regalo:\n'
+    + 'Da: ' + mittente + '\n'
+    + 'Per: ' + destinatario + '\n'
+    + trattamentoText;
+  if (dedica) msg += '\nDedica: ' + dedica;
+  msg += '\nTi invio anche le immagini fronte e retro del buono!';
+
+  var whatsappUrl = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+  var base = 'buono-' + slug(destinatario);
+
+  // Genera le immagini dai canvas e procedi
+  drawExports().then(function() {
+    return Promise.all([
+      canvasFile($('exp-front'), base + '-fronte.png'),
+      canvasFile($('exp-back'), base + '-retro.png')
+    ]);
+  }).then(function(files) {
+    // 1. Tenta la condivisione nativa (funziona su smartphone / tablet)
+    if (navigator.canShare && navigator.canShare({ files: files })) {
+      navigator.share({
+        files: files,
+        title: 'Buono Regalo Hair&Barber Revolution',
+        text: msg
+      }).catch(function() {
+        window.open(whatsappUrl, '_blank');
+      });
+    } else {
+      // 2. Fallback per PC: scarica le due immagini ed apre subito WhatsApp
+      files.forEach(function(f, i) {
+        setTimeout(function() {
+          var url = URL.createObjectURL(f), a = document.createElement('a');
+          a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function() { URL.revokeObjectURL(url); }, 4000);
+        }, i * 350);
+      });
+      // Apre WhatsApp in modo diretto (evitando il blocco dei popup)
+      window.location.href = whatsappUrl;
+    }
+  }).catch(function(err) {
+    console.error("Errore durante la generazione delle immagini:", err);
+    // Fallback estremo se il canvas fallisce: apre almeno WhatsApp con il testo
+    window.location.href = whatsappUrl;
+  });
+});
+
+function hidePopup() {
+  $('popup-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  if (popupOpener && popupOpener.focus) popupOpener.focus();
+}
+function closePopup(e) { if (e && e.target === $('popup-overlay')) hidePopup(); }
+function cancelPopup() { hidePopup(); }
+
+/* Passo 1: Apri WhatsApp / Condividi */
+function confirmSend() {
+  var base = 'buono-' + slug(val('b-destinatario'));
+  
+  drawExports().then(function() {
+    return Promise.all([canvasFile($('exp-front'), base + '-fronte.png'), canvasFile($('exp-back'), base + '-retro.png')]);
+  }).then(function(files) {
+    /* 1. Prova condivisione diretta di Testo + Immagini (Supportata su Smartphone) */
+    if (canShareFiles() && navigator.canShare({ files: files })) {
+      navigator.share({
+        files: files,
+        title: 'Buono Regalo Hair&Barber Revolution',
+        text: $('popup-message').textContent
+      }).then(function() {
+        hidePopup();
+      }).catch(function() {
+        /* Fallback manuale se l'utente annulla la condivisione */
+        window.open(pendingWhatsappUrl, '_blank');
+      });
+    } else {
+      /* 2. Fallback per Desktop: Scarica le immagini sul PC e apre il link WhatsApp */
+      files.forEach(function(f, i) {
+        setTimeout(function() {
+          var url = URL.createObjectURL(f), a = document.createElement('a');
+          a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function() { URL.revokeObjectURL(url); }, 4000);
+        }, i * 300);
+      });
+      window.open(pendingWhatsappUrl, '_blank');
+      hidePopup();
+    }
+  });
+}
+
+function sendImages() {
+  confirmSend();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && $('popup-overlay').classList.contains('open')) hidePopup();
+});
+
+update();
+</script>
+<script src="cookie-banner.js"></script>
+</body>
+</html>

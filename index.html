@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hair&amp;Barber Revolution</title>
+  <meta name="description" content="Hair&amp;Barber Revolution - Salone Parrucchieri &amp; Barber Shop a Costa Masnaga (LC). Taglio, colore, barba e molto altro." />
+  <meta name="theme-color" content="#0d0d0d" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- Stato iniziale: deciso prima del primo paint per evitare sfarfallii.
+       .js          = JavaScript attivo (abilita le animazioni di comparsa)
+       .is-loading  = schermata di caricamento visibile
+       .no-splash   = caricamento saltato (visita già fatta in questa sessione, link con #ancora, movimento ridotto)
+       .ready       = pagina pronta, parte l'entrata dell'hero -->
+  <script>
+    (function () {
+      var d = document.documentElement, seen = false;
+      d.classList.add('js');
+      try { seen = sessionStorage.getItem('hbr_splash') === '1'; } catch (e) {}
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (seen || window.location.hash || reduce) { d.classList.add('no-splash', 'ready'); }
+      else { d.classList.add('is-loading'); }
+    })();
+  </script>
+  <style>
+    /* CSS critico della schermata di caricamento: in linea, così compare subito */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    html.is-loading { overflow: hidden; }
+    body { background: #fafafa; color: #0d0d0d; }
+    #splash {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.25rem;
+      background: #fafafa;
+      transition: transform .95s cubic-bezier(.76, 0, .24, 1);
+    }
+    html.ready #splash { transform: translateY(-100%); }
+    html.no-splash #splash { display: none; }
+    #splash img { width: min(15rem, 58vw); height: auto; animation: splashIn .9s cubic-bezier(.16, 1, .3, 1) both; }
+    #splash .pole-rule { width: 7.5rem; animation: splashIn .9s cubic-bezier(.16, 1, .3, 1) .15s both; }
+    @keyframes splashIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  </style>
+  <noscript><style>#splash { display: none; }</style></noscript>
+
+  <link rel="preload" as="image" href="logo-small.png" />
+  <link rel="preload" as="image" href="IMMAGINI_GENERALI/banner.jpg" fetchpriority="high" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Google tag (gtag.js) - Consent Mode v2 -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E9R0TDFCKJ"></script>
+<script>
+  gtag('js', new Date());
+  gtag('config', 'G-E9R0TDFCKJ');
+</script>
+  <script src="GALLERIA_DONNA.js"></script>
+  <script src="GALLERIA_UOMO.js"></script>
+  <script src="SERVIZI_DONNA.js"></script>
+  <script src="SERVIZI_UOMO.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { black: '#0d0d0d', white: '#fafafa' },
+          fontFamily: {
+            serif: ["'Cormorant Garamond'", "serif"],
+            sans:  ["'Jost'", "'Segoe UI'", "system-ui", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="hbr.css" />
+</head>
+
+<body class="home">
+
+<!-- SCHERMATA DI CARICAMENTO: logo + palo da barbiere. Dura quanto serve davvero
+     (font + immagine dell'hero), minimo 1,2 s e massimo 3,5 s, una sola volta per sessione. -->
+<div id="splash" aria-hidden="true">
+  <img src="logo-small.png" alt="" width="720" height="474" />
+  <div class="pole-rule"></div>
+</div>
+
+<div id="site">
+
+<!-- Sentinella: quando esce dallo schermo la navbar diventa piena -->
+<div id="nav-sentinel" aria-hidden="true" style="position:absolute;top:0;left:0;width:1px;height:60px;pointer-events:none;"></div>
+
+<!-- NAVBAR -->
+<header id="navbar" class="fixed top-0 left-0 right-0 z-40 py-3" style="background:transparent;">
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="container mx-auto px-6 flex items-center justify-between">
+
+    <button onclick="goTo('home')" class="focus:outline-none" aria-label="Torna all'inizio">
+      <img src="logo-white-small.png" alt="Hair&amp;Barber Revolution" width="560" height="369" style="height:3.25rem;width:auto;object-fit:contain;"
+        onerror="this.src='logo.png';this.style.filter='brightness(0) invert(1)';" />
+    </button>
+
+    <nav class="hidden xl:flex items-center" style="gap:1.75rem;" aria-label="Navigazione principale">
+      <button onclick="goTo('home')"     data-nav="home"     class="text-xs uppercase tracking-[0.15em] font-medium text-white">Home</button>
+      <button onclick="goTo('about')"    data-nav="about"    class="text-xs uppercase tracking-[0.15em] font-medium text-white">Chi siamo</button>
+      <button onclick="goTo('services')" data-nav="services" class="text-xs uppercase tracking-[0.15em] font-medium text-white">Servizi</button>
+      <button onclick="goTo('gallery')"  data-nav="gallery"  class="text-xs uppercase tracking-[0.15em] font-medium text-white">Galleria</button>
+      <button onclick="goTo('booking')"  data-nav="booking"  class="text-xs uppercase tracking-[0.15em] font-medium text-white">Prenota</button>
+      <a href="novita.html"             class="text-xs uppercase tracking-[0.15em] font-medium text-white">Novità</a>
+      <a href="buoni.html"               class="text-xs uppercase tracking-[0.15em] font-medium text-white">Buoni</a>
+      <a href="promozioni.html"          class="text-xs uppercase tracking-[0.15em] font-medium text-white">Promozioni</a>
+      <a href="recensioni.html"          class="text-xs uppercase tracking-[0.15em] font-medium text-white">Recensioni</a>
+      <button onclick="goTo('contact')"  data-nav="contact"  class="text-xs uppercase tracking-[0.15em] font-medium text-white">Contatti</button>
+    </nav>
+
+    <div class="hidden xl:flex items-center" style="gap:1rem;">
+      <a href="https://www.facebook.com/hairbarberrevolution/" target="_blank" rel="noreferrer" class="text-white hover:opacity-60 transition-opacity" aria-label="Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/hair.barberrevolution/" target="_blank" rel="noreferrer" class="text-white hover:opacity-60 transition-opacity" aria-label="Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+      </a>
+    </div>
+
+    <button onclick="openMenu()" class="xl:hidden text-white focus:outline-none p-2 -mr-2" aria-label="Apri menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- MENU MOBILE: scrollabile, tutto visibile -->
+<div id="mobile-menu" class="fixed inset-0 z-50 bg-black flex-col items-center" style="overflow-y:auto;padding-top:4.5rem;padding-bottom:2rem;">
+  <button onclick="closeMenu()" class="absolute top-4 right-5 text-white p-2 focus:outline-none" aria-label="Chiudi menu">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+  <img src="logo-white-small.png" alt="Hair&amp;Barber Revolution" width="560" height="369" style="height:4.5rem;width:auto;object-fit:contain;margin-bottom:1.75rem;opacity:.9;"
+    onerror="this.src='logo.png';this.style.filter='brightness(0) invert(1)';" />
+  <nav class="flex flex-col items-center" style="gap:1.1rem;" aria-label="Navigazione mobile">
+    <button onclick="goTo('home');closeMenu()"     class="text-2xl font-serif uppercase tracking-widest text-white">Home</button>
+    <button onclick="goTo('about');closeMenu()"    class="text-2xl font-serif uppercase tracking-widest text-white">Chi siamo</button>
+    <button onclick="goTo('services');closeMenu()" class="text-2xl font-serif uppercase tracking-widest text-white">Servizi</button>
+    <button onclick="goTo('gallery');closeMenu()"  class="text-2xl font-serif uppercase tracking-widest text-white">Galleria</button>
+    <button onclick="goTo('booking');closeMenu()"  class="text-2xl font-serif uppercase tracking-widest text-white">Prenota</button>
+    <a href="novita.html"                          class="text-2xl font-serif uppercase tracking-widest text-white">Novità</a>
+    <a href="buoni.html"                           class="text-2xl font-serif uppercase tracking-widest text-white">Buoni</a>
+    <a href="promozioni.html"                      class="text-2xl font-serif uppercase tracking-widest text-white">Promozioni</a>
+    <a href="recensioni.html"                      class="text-2xl font-serif uppercase tracking-widest text-white">Recensioni</a>
+    <button onclick="goTo('contact');closeMenu()"  class="text-2xl font-serif uppercase tracking-widest text-white">Contatti</button>
+  </nav>
+  <div class="flex" style="gap:1.5rem;margin-top:2rem;">
+    <a href="https://www.facebook.com/hairbarberrevolution/" target="_blank" rel="noreferrer" class="text-white p-2" aria-label="Facebook">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/hair.barberrevolution/" target="_blank" rel="noreferrer" class="text-white p-2" aria-label="Instagram">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+    </a>
+  </div>
+</div>
+
+<main>
+
+  <!-- HERO: contenuto in basso a sinistra, immagine subito, video caricato dopo -->
+  <section id="home">
+    <div class="hero-media">
+      <img class="hero-bg" src="IMMAGINI_GENERALI/banner.jpg" alt="" width="1920" height="1097" fetchpriority="high" decoding="async" />
+      <video id="hero-video" class="hero-video" muted loop playsinline preload="none" data-src="VIDEO_HBR/video.mp4" aria-hidden="true"></video>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content container mx-auto px-6">
+      <h1 class="hero-title" aria-label="Hair&amp;Barber Revolution">
+        <span class="hero-line" aria-hidden="true"><span>Hair&amp;Barber</span></span>
+        <span class="hero-line" aria-hidden="true"><span>Revolution</span></span>
+      </h1>
+      <p class="hero-sub">
+        Un salone di bellezza dove l'arte incontra la precisione.
+        Ogni dettaglio curato con passione, per donna e per uomo.
+      </p>
+      <div class="hero-cta">
+        <button onclick="goTo('booking')" class="btn btn-light">Prenota un appuntamento</button>
+        <button onclick="goTo('services')" class="btn btn-ghost-light">Vedi il listino</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHI SIAMO -->
+  <section id="about" class="section">
+    <div class="container mx-auto">
+      <div style="max-width:62rem;margin-bottom:clamp(3rem,7vw,5.5rem);">
+        <p class="eyebrow anim-up">Chi siamo</p>
+        <h2 class="h-section anim-up" style="margin-bottom:1.75rem;transition-delay:.08s;">Stile, eleganza e precisione</h2>
+        <p class="statement anim-up" data-words style="transition-delay:.16s;">
+          Hair&amp;Barber Revolution nasce dalla passione per la cura dei capelli e della barba.
+          Il nostro salone è uno spazio moderno e accogliente, pensato per offrire un momento
+          di puro relax e cura di sé. Ogni dettaglio è curato con professionalità e amore per l'arte.
+        </p>
+      </div>
+
+      <div class="team-grid">
+
+        <!-- Veruska -->
+        <article class="team-card anim-up">
+          <div class="team-photo">
+            <img src="IMMAGINI_NOI/veruska.jpg" alt="Veruska con gli attestati di gara" width="900" height="873" loading="lazy" style="object-position:72% 30%;"
+              onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\'team-placeholder\'>V</div>'" />
+          </div>
+          <div>
+            <h3 class="team-name">Veruska</h3>
+            <p class="team-role">Stilista &amp; Colorista</p>
+            <p class="team-bio">Esperta colorista e stilista donna. Trasforma ogni taglio e colore in un'opera d'arte personalizzata, esaltando la bellezza naturale di ogni cliente con tecniche all'avanguardia e un tocco unico.</p>
+          </div>
+        </article>
+
+        <!-- Max -->
+        <article class="team-card anim-up" style="transition-delay:.12s;">
+          <div class="team-photo">
+            <img src="IMMAGINI_NOI/max.jpg" alt="Max" width="900" height="900" loading="lazy" style="object-position:50% 20%;"
+              onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\'team-placeholder\'>M</div>'" />
+          </div>
+          <div>
+            <h3 class="team-name">Max</h3>
+            <p class="team-role">Maestro Barbiere</p>
+            <p class="team-bio">Precisione millimetrica nei tagli maschili e maestria nella rasatura classica. Unisce la tradizione del barber shop italiano alle tendenze contemporanee con passione e dedizione.</p>
+          </div>
+        </article>
+
+        <!-- Gaia -->
+        <article class="team-card anim-up" style="transition-delay:.24s;">
+          <div class="team-photo">
+            <img src="IMMAGINI_NOI/gaia.jpg" alt="Gaia" width="900" height="1200" loading="lazy" style="object-position:50% 35%;"
+              onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\'team-placeholder\'>G</div>'" />
+          </div>
+          <div>
+            <h3 class="team-name">Gaia</h3>
+            <p class="team-role">Parte del Team dal 2024</p>
+            <p class="team-bio">Entrata a far parte del team di Hair&amp;Barber Revolution nel 2024, collabora fianco a fianco con Veruska portando freschezza, precisione e passione per la cura dei capelli.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVIZI / LISTINO: un solo elenco alla volta, scelto con Donna / Uomo -->
+  <section id="services" class="section section-dark">
+    <div class="container mx-auto">
+      <div class="price-layout">
+      <div class="price-aside">
+        <h2 class="h-section anim-up" style="margin-bottom:2rem;">I Nostri Servizi</h2>
+        <div class="seg seg-inv anim-up" id="srv-seg" data-active="0" role="group" aria-label="Scegli il listino" style="transition-delay:.1s;">
+          <button id="srv-btn-donna" type="button" aria-pressed="true"  onclick="setServizio('donna')">Donna</button>
+          <button id="srv-btn-uomo"  type="button" aria-pressed="false" onclick="setServizio('uomo')">Uomo</button>
+        </div>
+        <p class="price-note anim-up" style="margin-top:2rem;transition-delay:.18s;">
+          I prezzi possono variare in base alla lunghezza e alla complessità del servizio.
+        </p>
+        <a href="#booking" onclick="event.preventDefault();goTo('booking')" class="btn btn-light anim-up" style="margin-top:1.75rem;transition-delay:.26s;">Prenota un appuntamento</a>
+      </div>
+
+      <div class="anim-up" style="transition-delay:.15s;">
+        <div class="price-col" id="col-donna">
+          <h3 class="sr-only">Listino donna</h3>
+          <ul class="price-list" id="table-donna"></ul>
+        </div>
+        <div class="price-col" id="col-uomo" hidden>
+          <h3 class="sr-only">Listino uomo</h3>
+          <ul class="price-list" id="table-uomo"></ul>
+        </div>
+      </div>
+
+      </div><!-- .price-layout -->
+    </div>
+  </section>
+
+  <!-- GALLERIA -->
+  <section id="gallery" class="section">
+    <div class="container mx-auto">
+      <div style="margin-bottom:clamp(2rem,4vw,3rem);">
+        <h2 class="h-section anim-up" style="margin-bottom:1rem;">Galleria</h2>
+        <p class="lede anim-up" style="transition-delay:.08s;">Sfoglia i nostri lavori divisi per donna e uomo.</p>
+      </div>
+
+      <div id="gallery-content"></div>
+
+      <div class="anim-up border-t border-black/15 flex flex-col lg:flex-row lg:items-center justify-between" style="margin-top:clamp(3rem,6vw,5rem);padding-top:2.5rem;gap:2rem;">
+        <div style="max-width:36rem;">
+          <h3 class="font-serif font-bold" style="font-size:1.7rem;line-height:1.15;margin-bottom:.6rem;">Scopri tutte le nostre creazioni</h3>
+          <p style="font-size:.95rem;line-height:1.7;opacity:.65;">
+            Seguici su Facebook e Instagram per vedere in tempo reale i nostri lavori,
+            le ultime tendenze e le novità del salone.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row" style="gap:.75rem;">
+          <a href="https://www.facebook.com/hairbarberrevolution/" target="_blank" rel="noreferrer" class="btn btn-dark">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            <span>Facebook</span>
+          </a>
+          <a href="https://www.instagram.com/hair.barberrevolution/" target="_blank" rel="noreferrer" class="btn btn-ghost-dark">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+            <span>Instagram</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRENOTAZIONE -->
+  <section id="booking" class="section" style="background:#f1f1f0;">
+    <div class="container mx-auto" style="max-width:68rem;">
+      <div class="grid grid-cols-1 lg:grid-cols-5" style="gap:clamp(2.5rem,5vw,4.5rem);">
+
+        <div class="lg:col-span-2">
+          <h2 class="h-section anim-up" style="margin-bottom:1.5rem;">Prenota il tuo appuntamento</h2>
+          <p class="lede anim-up" style="margin-bottom:2.25rem;transition-delay:.1s;">
+            Scegli i servizi desiderati e prenota comodamente tramite WhatsApp.
+            Il nostro team ti risponderà il prima possibile per confermare data e orario.
+          </p>
+          <ol class="booking-steps anim-up hidden lg:block" style="transition-delay:.2s;">
+            <li>Seleziona sesso e servizi</li>
+            <li>Invia richiesta su WhatsApp</li>
+            <li>Attendi la nostra conferma</li>
+          </ol>
+        </div>
+
+        <div class="anim-up lg:col-span-3 border border-black" style="background:#fafafa;padding:clamp(1.5rem,4vw,2.5rem);transition-delay:.1s;">
+          <form id="booking-form" onsubmit="handleSubmit(event)" novalidate>
+
+            <div style="margin-bottom:1.75rem;">
+              <label for="f-name" class="field-label">Nome e Cognome</label>
+              <input id="f-name" type="text" placeholder="Inserisci il tuo nome" required autocomplete="name" class="field-input" />
+            </div>
+
+            <div style="margin-bottom:1.75rem;">
+              <label for="f-gender" class="field-label">Sesso</label>
+              <select id="f-gender" class="styled-select" onchange="onGenderChange()">
+                <option value="">Seleziona...</option>
+                <option value="Donna">Donna</option>
+                <option value="Uomo">Uomo</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom:1.75rem;">
+              <span class="field-label" id="services-label">Servizi Desiderati</span>
+              <div id="services-container" role="group" aria-labelledby="services-label"></div>
+              <button type="button" onclick="addServiceRow()"
+                class="flex items-center uppercase font-medium transition-opacity hover:opacity-60"
+                style="gap:.6rem;font-size:.72rem;letter-spacing:.1em;margin-top:.9rem;">
+                <span class="border border-black flex items-center justify-center" style="width:1.75rem;height:1.75rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </span>
+                <span>Aggiungi un altro servizio</span>
+              </button>
+            </div>
+
+            <!-- TOTALE STIMATO -->
+            <div id="booking-total-wrap" style="display:none;margin-bottom:1.5rem;padding:1rem 1.1rem;border:1px solid rgba(13,13,13,.14);background:#f1f1f0;">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;">
+                <span class="uppercase" style="font-size:.72rem;letter-spacing:.12em;opacity:.65;">Totale stimato</span>
+                <span id="booking-total-amount" class="font-serif font-bold" style="font-size:1.35rem;" aria-live="polite"></span>
+              </div>
+              <p id="booking-total-note" style="font-size:.78rem;opacity:.65;margin-top:.35rem;display:none;"></p>
+            </div>
+
+            <div class="border-t border-black/10" style="padding-top:1.5rem;">
+              <p id="booking-error" class="form-error" role="alert" hidden></p>
+              <button type="submit" id="submit-btn" class="btn btn-dark btn-block" style="min-height:3.5rem;font-size:.82rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span id="submit-label">Vai a WhatsApp</span>
+              </button>
+              <p class="text-center" style="font-size:.78rem;opacity:.6;margin-top:1rem;">
+                Verrai reindirizzato a WhatsApp con un messaggio precompilato in base ai dati inseriti.
+              </p>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATTI: recapiti e orari a sinistra, mappa a destra -->
+  <section id="contact" class="section section-dark">
+    <div class="container mx-auto">
+      <h2 class="h-section anim-up" style="margin-bottom:clamp(2.5rem,5vw,4rem);">Contattaci</h2>
+
+      <div class="contact-grid">
+        <div>
+
+          <div class="contact-block anim-up">
+            <h3 class="contact-h">Indirizzo</h3>
+            <p style="font-size:1rem;line-height:1.7;opacity:.75;">Via Fornacetta 7<br />Costa Masnaga (LC)</p>
+          </div>
+
+          <div class="contact-block anim-up" style="transition-delay:.08s;">
+            <h3 class="contact-h">Prenota per telefono o WhatsApp</h3>
+            <div class="contact-people">
+              <div>
+                <p>Veruska: 333 135 5200</p>
+                <a href="tel:+393331355200" class="btn btn-ghost-light btn-sm btn-block">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.59 1.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.73a16 16 0 0 0 6.29 6.29l.87-.87a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.98 16.92z"/></svg>
+                  Chiama Veruska
+                </a>
+                <a href="https://wa.me/393331355200" target="_blank" rel="noreferrer" class="btn btn-ghost-light btn-sm btn-block">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                  WhatsApp Veruska
+                </a>
+              </div>
+              <div>
+                <p>Max: 338 158 3431</p>
+                <a href="tel:+393381583431" class="btn btn-ghost-light btn-sm btn-block">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.59 1.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.73a16 16 0 0 0 6.29 6.29l.87-.87a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.98 16.92z"/></svg>
+                  Chiama Max
+                </a>
+                <a href="https://wa.me/393381583431" target="_blank" rel="noreferrer" class="btn btn-ghost-light btn-sm btn-block">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                  WhatsApp Max
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- ORARIO: il giorno di oggi viene evidenziato dallo script -->
+          <div class="contact-block anim-up" style="transition-delay:.16s;">
+            <div class="flex flex-wrap items-baseline justify-between" style="gap:.75rem 1.5rem;margin-bottom:1rem;">
+              <h3 class="contact-h" style="margin-bottom:0;">Orari di apertura</h3>
+              <div id="orario-status" aria-live="polite"></div>
+            </div>
+            <dl class="hours" id="hours-list" style="padding-left:.9rem;">
+              <dt data-day="1">Lunedì</dt><dd data-day="1" class="is-closed">Chiuso</dd>
+              <dt data-day="2">Martedì</dt><dd data-day="2">09:00 - 19:00</dd>
+              <dt data-day="3">Mercoledì</dt><dd data-day="3">12:00 - 21:00</dd>
+              <dt data-day="4">Giovedì</dt><dd data-day="4">09:00 - 19:00</dd>
+              <dt data-day="5">Venerdì</dt><dd data-day="5">09:00 - 19:00</dd>
+              <dt data-day="6">Sabato</dt><dd data-day="6">08:00 - 16:00</dd>
+              <dt data-day="0">Domenica</dt><dd data-day="0" class="is-closed">Chiuso</dd>
+            </dl>
+          </div>
+
+          <div class="contact-block anim-up" style="transition-delay:.24s;">
+            <h3 class="contact-h">Social</h3>
+            <div class="flex flex-wrap" style="gap:.5rem 2rem;">
+              <a href="https://www.facebook.com/hairbarberrevolution/" target="_blank" rel="noreferrer"
+                class="flex items-center text-white/70 hover:text-white transition-colors" style="gap:.5rem;font-size:.95rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                Facebook Negozio
+              </a>
+              <a href="https://www.instagram.com/hair.barberrevolution/" target="_blank" rel="noreferrer"
+                class="flex items-center text-white/70 hover:text-white transition-colors" style="gap:.5rem;font-size:.95rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+                Instagram Negozio
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="anim-up" style="transition-delay:.12s;">
+          <div class="map-frame">
+            <iframe
+              title="Hair&amp;Barber Revolution - Via Fornacetta 7, Costa Masnaga"
+              src="https://maps.google.com/maps?q=Via+Fornacetta+7,+Costa+Masnaga,+LC,+Italy&output=embed&z=16"
+              allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FASCIA FINALE: l'azione principale della pagina, in grande -->
+  <a href="#booking" onclick="event.preventDefault();goTo('booking')" class="cta-band">
+    <span class="container mx-auto cta-band-inner">
+      <span class="cta-band-text">Prenota un appuntamento</span>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><line x1="6" y1="24" x2="41" y2="24"/><polyline points="27 10 41 24 27 38"/></svg>
+    </span>
+  </a>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-black text-white border-t border-white/10 px-6" style="padding-top:2.5rem;padding-bottom:2.5rem;">
+  <div class="container mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center" style="gap:1.5rem;margin-bottom:1.5rem;">
+      <img src="logo-white-small.png" alt="Hair&amp;Barber Revolution" width="560" height="369" loading="lazy" style="height:3.5rem;width:auto;object-fit:contain;"
+        onerror="this.src='logo.png';this.style.filter='brightness(0) invert(1)';" />
+      <div class="flex flex-wrap justify-center items-center" style="gap:.75rem 1rem;">
+        <a href="https://www.facebook.com/hairbarberrevolution/" target="_blank" rel="noreferrer" class="text-white/60 hover:text-white transition-colors" aria-label="Facebook">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/hair.barberrevolution/" target="_blank" rel="noreferrer" class="text-white/60 hover:text-white transition-colors" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+        </a>
+        <a href="https://g.page/r/CX5BLAXF88S0EBM/review" target="_blank" rel="noreferrer"
+           class="flex items-center text-white/60 hover:text-white transition-colors" style="gap:.35rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Recensioni Google
+        </a>
+        <a href="https://www.facebook.com/hairbarberrevolution/reviews/" target="_blank" rel="noreferrer"
+           class="flex items-center text-white/60 hover:text-white transition-colors" style="gap:.35rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          Recensioni Facebook
+        </a>
+      </div>
+      <div class="text-white/50 text-xs tracking-widest text-center md:text-right" style="line-height:1.8;">
+        Hair&amp;Barber Revolution, via Fornacetta 7 Costa Masnaga (LC), 23845<br>
+        &copy; <span id="footer-year"></span> HAIR&amp;BARBER REVOLUTION DI TOMA VERUSKA. TUTTI I DIRITTI RISERVATI.<br>
+        P.IVA 03667090132<br>
+        <a href="privacy.html" class="text-white/50 hover:text-white transition-colors underline underline-offset-2">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div><!-- #site -->
+
+<script>
+'use strict';
+
+/* ── Footer year ── */
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+/* ════════════════════════
+   NAVBAR: transparent over hero, black after scroll
+════════════════════════ */
+(function() {
+  /* Nessun listener di scroll: un IntersectionObserver su una sentinella in cima alla pagina */
+  var nb = document.getElementById('navbar');
+  var sentinel = document.getElementById('nav-sentinel');
+  if (!('IntersectionObserver' in window) || !sentinel) { nb.classList.add('is-solid'); return; }
+  new IntersectionObserver(function(entries) {
+    nb.classList.toggle('is-solid', !entries[0].isIntersecting);
+  }).observe(sentinel);
+
+  /* Evidenzia nella navbar la sezione che si sta guardando */
+  var links = {};
+  Array.prototype.forEach.call(document.querySelectorAll('#navbar [data-nav]'), function(b) { links[b.getAttribute('data-nav')] = b; });
+  var spy = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting) return;
+      Object.keys(links).forEach(function(id) { links[id].classList.toggle('is-current', id === e.target.id); });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  Object.keys(links).forEach(function(id) { var s = document.getElementById(id); if (s) spy.observe(s); });
+})();
+
+/* ════════════════════════
+   CARICAMENTO INIZIALE
+   La schermata resta finché servono davvero font e immagine dell'hero:
+   minimo 1,2 s (per non sfarfallare), massimo 3,5 s (rete lenta).
+   Poi <html> riceve .ready: il telo sale e parte l'entrata dell'hero.
+   Viene mostrata una sola volta per sessione del browser.
+════════════════════════ */
+var pageReadyCallbacks = [];
+function onPageReady(fn) {
+  if (pageReadyCallbacks === null) fn(); else pageReadyCallbacks.push(fn);
+}
+(function() {
+  var d = document.documentElement;
+  var splash = document.getElementById('splash');
+  var done = false;
+
+  function fire() {
+    var list = pageReadyCallbacks; pageReadyCallbacks = null;
+    list.forEach(function(fn) { try { fn(); } catch (e) {} });
+  }
+  function finish() {
+    if (done) return;
+    done = true;
+    var wait = Math.max(0, 1200 - performance.now());
+    setTimeout(function() {
+      d.classList.add('ready');
+      d.classList.remove('is-loading');
+      try { sessionStorage.setItem('hbr_splash', '1'); } catch (e) {}
+      setTimeout(function() { if (splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 1100);
+      fire();
+    }, wait);
+  }
+
+  if (d.classList.contains('ready')) {           /* caricamento saltato */
+    if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
+    document.addEventListener('DOMContentLoaded', fire);
+    return;
+  }
+  var img = document.querySelector('.hero-bg');
+  var imgReady = (!img || img.complete) ? Promise.resolve() : new Promise(function(res) {
+    img.addEventListener('load', res); img.addEventListener('error', res);
+  });
+  var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+  Promise.all([imgReady, fontsReady]).then(finish);
+  setTimeout(finish, 3500);
+})();
+
+/* ════════════════════════
+   NAVIGATION
+════════════════════════ */
+function goTo(id) {
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ════════════════════════
+   MOBILE MENU
+════════════════════════ */
+function openMenu() {
+  var m = document.getElementById('mobile-menu');
+  m.classList.remove('closing');
+  m.classList.add('open');
+}
+function closeMenu() {
+  var m = document.getElementById('mobile-menu');
+  m.classList.add('closing');
+  setTimeout(function() { m.classList.remove('open', 'closing'); }, 400);
+}
+
+/* ════════════════════════
+   SERVIZI TOGGLE MOBILE
+════════════════════════ */
+/* Imposta lo stato di un selettore a due voci (.seg): quale bottone è attivo */
+function setSeg(segId, activeIndex) {
+  var seg = document.getElementById(segId);
+  if (!seg) return;
+  seg.setAttribute('data-active', activeIndex);
+  Array.prototype.forEach.call(seg.querySelectorAll('button'), function(b, i) {
+    b.setAttribute('aria-pressed', i === activeIndex ? 'true' : 'false');
+  });
+}
+
+/* Listino: si vede un solo elenco alla volta, a ogni larghezza di schermo */
+function setServizio(g) {
+  document.getElementById('col-donna').hidden = g !== 'donna';
+  document.getElementById('col-uomo').hidden  = g !== 'uomo';
+  setSeg('srv-seg', g === 'donna' ? 0 : 1);
+}
+
+/* ════════════════════════
+   SCROLL ANIMATIONS
+════════════════════════ */
+var animationsStarted = false;
+function checkAnimations() {
+  if (animationsStarted) return;
+  animationsStarted = true;
+  var els = document.querySelectorAll('.anim-up, .anim-fade, .anim-left');
+  if (!('IntersectionObserver' in window)) {
+    Array.prototype.forEach.call(els, function(el) { el.classList.add('in'); });
+    return;
+  }
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); }
+    });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  els.forEach(function(el) { observer.observe(el); });
+}
+onPageReady(checkAnimations);
+
+/* Divide un testo in parole avvolte da <span>, lasciando gli spazi veri tra una e l'altra
+   (il testo resta leggibile da lettori di schermo e copiabile). */
+function splitWords(el, outerClass, inner) {
+  var words = el.textContent.replace(/\s+/g, ' ').trim().split(' ');
+  el.textContent = '';
+  words.forEach(function(word, i) {
+    var outer = document.createElement('span');
+    outer.className = outerClass;
+    outer.style.setProperty('--i', i);
+    if (inner) { var s = document.createElement('span'); s.textContent = word; outer.appendChild(s); }
+    else { outer.textContent = word; }
+    el.appendChild(outer);
+    if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+  });
+}
+/* Titoli di sezione: parole che salgono da dietro una maschera */
+Array.prototype.forEach.call(document.querySelectorAll('.h-section.anim-up'), function(h) {
+  splitWords(h, 'w', true);
+  h.classList.add('is-split');
+});
+/* Foto del team su schermi senza mouse: si colora quella che passa nella fascia
+   centrale dello schermo durante lo scroll, le altre tornano in bianco e nero */
+(function() {
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) { e.target.classList.toggle('is-color', e.isIntersecting); });
+  }, { rootMargin: '-38% 0px -38% 0px' });
+  Array.prototype.forEach.call(document.querySelectorAll('.team-card'), function(c) { io.observe(c); });
+})();
+
+/* Frase di "Chi siamo": parole che si accendono con lo scroll (solo CSS, dove supportato) */
+Array.prototype.forEach.call(document.querySelectorAll('[data-words]'), function(p) { splitWords(p, 'sw', false); });
+
+
+var SERVICES = {
+  donna: window.SERVIZI_DONNA_DATA || [],
+  uomo:  window.SERVIZI_UOMO_DATA  || []
+};
+
+function loadServices() {
+  renderPriceTables();
+  renderServiceRows();
+}
+
+function renderPriceTables() {
+  ['donna','uomo'].forEach(function(gender) {
+    var ul = document.getElementById('table-' + gender);
+    if (!ul) return;
+    var list = SERVICES[gender];
+    if (!list.length) {
+      ul.innerHTML = '<li><span class="pl-name">Listino in aggiornamento: contattaci per i prezzi.</span></li>';
+      return;
+    }
+    ul.innerHTML = list.map(function(s, i) {
+      return '<li style="--i:' + i + '">'
+        + '<span class="pl-name">' + s.nome + '</span>'
+        + '<span class="pl-dots" aria-hidden="true"></span>'
+        + '<span class="pl-price">' + s.prezzo + '</span>'
+        + '</li>';
+    }).join('');
+  });
+}
+
+/* ════════════════════════
+   GALLERY - load from JSON
+   Formato JSON: array di nomi file, es. ["foto.jpg","altra.png"]
+   Qualsiasi nome, qualsiasi estensione. Aggiungere una riga per ogni foto.
+════════════════════════ */
+var GALLERY = { donna: [], uomo: [] };
+var currentTab  = 'donna';
+var currentSort = { donna: 'order', uomo: 'order' };
+
+/* ── Carica galleria dai file GALLERIA_*.js ── */
+function loadGallery() {
+  var donnaFiles = window.GALLERIA_DONNA_DATA || [];
+  var uomoFiles  = window.GALLERIA_UOMO_DATA  || [];
+  GALLERY.donna = donnaFiles.map(function(name, i) {
+    return { url: 'IMMAGINI_DONNA/' + name, mtime: i, order: i };
+  });
+  GALLERY.uomo = uomoFiles.map(function(name, i) {
+    return { url: 'IMMAGINI_UOMO/' + name, mtime: i, order: i };
+  });
+  renderGallery();
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function applySorted(arr, mode) {
+  if (mode === 'order')  return arr.slice().sort(function(a,b){ return a.order - b.order; });
+  if (mode === 'recent') return arr.slice().sort(function(a,b){ return b.mtime - a.mtime; });
+  if (mode === 'oldest') return arr.slice().sort(function(a,b){ return a.mtime - b.mtime; });
+  return shuffle(arr);
+}
+
+function setTab(tab) {
+  currentTab = tab;
+  renderGallery();
+}
+
+var GALLERY_PREVIEW_MAX = 8; /* max foto visibili in home prima del tile "Vedi altre" */
+
+/* Controlli di ordinamento. prefix = 'modal' per la galleria completa */
+function buildSortControls(tab, mode, prefix) {
+  var fn = prefix === 'modal' ? 'setModalSort' : 'setSort';
+  var isRandom = mode === 'random';
+  var reshuffleBtn = isRandom
+    ? '<button type="button" class="icon-btn" onclick="' + fn + '(\'' + tab + '\',\'random\')" title="Rimescola" aria-label="Rimescola le foto">'
+      + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg></button>'
+    : '';
+  return '<div class="seg seg-sm" data-active="' + (isRandom ? 1 : 0) + '" role="group" aria-label="Ordine delle foto">'
+       + '<button type="button" aria-pressed="' + (!isRandom) + '" onclick="' + fn + '(\'' + tab + '\',\'order\')">Ordine</button>'
+       + '<button type="button" aria-pressed="' + isRandom + '" onclick="' + fn + '(\'' + tab + '\',\'random\')">Casuale</button>'
+       + '</div>' + reshuffleBtn;
+}
+
+function emptyGalleryHtml(tab) {
+  return '<div class="empty-box">Nessuna foto presente nella cartella IMMAGINI_' + tab.toUpperCase()
+       + '. Aggiungi le foto e rigenera la galleria con genera_galleria.</div>';
+}
+
+function tileHtml(img, alt, i) {
+  return '<div class="gallery-item" style="--i:' + Math.min(i, 14) + '"><img src="' + img.url + '" alt="' + alt + '" loading="lazy" decoding="async" /><div class="gallery-overlay"></div></div>';
+}
+
+function renderGallery() {
+  var tab    = currentTab;
+  var mode   = currentSort[tab];
+  var images = applySorted(GALLERY[tab], mode);
+  var label  = tab === 'donna' ? 'Donna' : 'Uomo';
+  var total  = images.length;
+  var root   = document.getElementById('gallery-content');
+
+  /* La barra (Donna/Uomo + ordinamento) viene creata una sola volta,
+     così il selettore può scorrere con la sua animazione */
+  if (!document.getElementById('gallery-seg')) {
+    root.innerHTML =
+        '<div class="gallery-bar">'
+      +   '<div class="seg" id="gallery-seg" data-active="0" role="group" aria-label="Scegli la galleria">'
+      +     '<button type="button" id="tab-btn-donna" aria-pressed="true" onclick="setTab(\'donna\')">Donna</button>'
+      +     '<button type="button" id="tab-btn-uomo" aria-pressed="false" onclick="setTab(\'uomo\')">Uomo</button>'
+      +   '</div>'
+      +   '<div class="flex items-center flex-wrap" style="gap:.6rem 1rem;">'
+      +     '<span class="gallery-count" id="gallery-count" aria-live="polite"></span>'
+      +     '<div class="flex items-center" id="gallery-tools" style="gap:.5rem;"></div>'
+      +   '</div>'
+      + '</div>'
+      + '<div id="gallery-grid-wrap"></div>';
+  }
+  setSeg('gallery-seg', tab === 'donna' ? 0 : 1);
+  document.getElementById('gallery-count').textContent = total + ' foto';
+  document.getElementById('gallery-tools').innerHTML = total > 0 ? buildSortControls(tab, mode) : '';
+
+  var gridHtml;
+  if (total === 0) {
+    gridHtml = emptyGalleryHtml(tab);
+  } else {
+    var preview = total <= GALLERY_PREVIEW_MAX ? images : images.slice(0, GALLERY_PREVIEW_MAX);
+    var remaining = total - GALLERY_PREVIEW_MAX;
+    var tiles = preview.map(function(img, i) { return tileHtml(img, label + ' ' + (i + 1), i); });
+    if (remaining > 0) {
+      var ninthImg = images[GALLERY_PREVIEW_MAX]; /* foto reale come sfondo del tile */
+      tiles.push(
+        '<div class="gallery-item" style="--i:' + GALLERY_PREVIEW_MAX + '">'
+        + '<img src="' + ninthImg.url + '" alt="" loading="lazy" decoding="async" />'
+        + '<button type="button" class="gallery-more" onclick="openGalleryModal()">'
+        + '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>'
+        + '<strong>Vedi altre foto</strong>'
+        + '<span>+ ' + remaining + ' in questa galleria</span>'
+        + '</button>'
+        + '</div>'
+      );
+    }
+    /* Con 9 riquadri il primo occupa 2x2: la griglia si chiude senza buchi a 2, 3 e 4 colonne */
+    gridHtml = '<div class="gallery-grid' + (tiles.length === 9 ? ' has-feature' : '') + '">' + tiles.join('') + '</div>';
+  }
+  document.getElementById('gallery-grid-wrap').innerHTML = gridHtml;
+}
+
+/* ════════════════════════
+   MODAL GALLERIA COMPLETA
+════════════════════════ */
+var modalTab  = 'donna';
+var modalSort = { donna: 'order', uomo: 'order' };
+var modalOpener = null;
+
+function openGalleryModal() {
+  modalTab  = currentTab;
+  modalSort = { donna: currentSort.donna, uomo: currentSort.uomo };
+  modalOpener = document.activeElement;
+  renderModalGallery();
+  var m = document.getElementById('gallery-modal');
+  m.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  var closeBtn = document.getElementById('modal-close');
+  if (closeBtn) closeBtn.focus();
+}
+
+function closeGalleryModal() {
+  var m = document.getElementById('gallery-modal');
+  if (m.style.display !== 'flex') return;
+  m.style.display = 'none';
+  document.body.style.overflow = '';
+  if (modalOpener && modalOpener.focus) modalOpener.focus();
+}
+
+function setModalTab(tab) {
+  modalTab = tab;
+  renderModalGallery();
+}
+
+function setSort(tab, mode) {
+  currentSort[tab] = mode;
+  renderGallery();
+  if (document.getElementById('gallery-modal').style.display === 'flex' && tab === modalTab) {
+    modalSort[tab] = mode;
+    renderModalGallery();
+  }
+}
+
+function setModalSort(tab, mode) {
+  modalSort[tab] = mode;
+  currentSort[tab] = mode;
+  renderModalGallery();
+  renderGallery();
+}
+
+function renderModalGallery() {
+  var tab    = modalTab;
+  var mode   = modalSort[tab];
+  var images = applySorted(GALLERY[tab], mode);
+  var label  = tab === 'donna' ? 'Donna' : 'Uomo';
+  var total  = images.length;
+
+  setSeg('modal-seg', tab === 'donna' ? 0 : 1);
+
+  var gridHtml = total === 0
+    ? emptyGalleryHtml(tab)
+    : '<div class="gallery-grid">'
+      + images.map(function(img, i) { return tileHtml(img, label + ' ' + (i + 1), i); }).join('')
+      + '</div>';
+
+  var headerEl = document.getElementById('modal-header-info');
+  var gridEl   = document.getElementById('modal-gallery-grid');
+  if (headerEl) headerEl.innerHTML =
+    '<span class="gallery-count">' + total + ' foto</span>'
+    + (total > 0 ? buildSortControls(tab, mode, 'modal') : '');
+  if (gridEl) gridEl.innerHTML = gridHtml;
+}
+
+/* ════════════════════════
+   BOOKING FORM
+════════════════════════ */
+var rowIds   = [0];
+var rowCount = 1;
+var formGender = '';
+
+function onGenderChange() {
+  formGender = document.getElementById('f-gender').value;
+  var name = formGender === 'Donna' ? 'Veruska' : formGender === 'Uomo' ? 'Max' : '';
+  document.getElementById('submit-label').textContent = name ? 'Vai a WhatsApp di ' + name : 'Vai a WhatsApp';
+  // I servizi donna e uomo sono completamente diversi: al cambio sesso
+  // manteniamo il numero di righe ma azzeriamo le selezioni in modo esplicito.
+  renderServiceRows(rowIds.map(function() { return ''; }));
+}
+
+function buildOptions(gender, selectedValue) {
+  var list = gender ? (SERVICES[gender.toLowerCase()] || []) : [];
+  var opts = '<option value="">Seleziona un servizio</option>'
+    + list.map(function(s) {
+        var sel = selectedValue && selectedValue === s.nome ? ' selected' : '';
+        return '<option value="' + s.nome + '"' + sel + '>' + s.nome + ' - ' + s.prezzo + '</option>';
+      }).join('');
+  return opts;
+}
+
+function buildRow(id, gender, selectedValue) {
+  return '<div class="service-row" id="srow-' + id + '">'
+    + '<select class="styled-select" id="sval-' + id + '" onchange="updateBookingTotal()">' + buildOptions(gender, selectedValue) + '</select>'
+    + (rowIds.length > 1
+       ? '<button type="button" onclick="removeRow(' + id + ')" style="flex-shrink:0;padding:.625rem;border:1px solid rgba(0,0,0,.2);color:rgba(0,0,0,.4);" class="hover:border-black hover:text-black transition-colors" aria-label="Rimuovi">'
+         + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+         + '</button>'
+       : '')
+    + '</div>';
+}
+
+function renderServiceRows(savedSelections) {
+  var container = document.getElementById('services-container');
+  // If no savedSelections passed, read current values before re-rendering
+  if (!savedSelections) {
+    savedSelections = rowIds.map(function(id) {
+      var el = document.getElementById('sval-' + id);
+      return el ? el.value : '';
+    });
+  }
+  container.innerHTML = rowIds.map(function(id, idx) {
+    return buildRow(id, formGender, savedSelections[idx] || '');
+  }).join('');
+  updateBookingTotal();
+}
+
+/* ════════════════════════
+   TOTALE STIMATO PRENOTAZIONE
+════════════════════════ */
+function parseEuro(priceStr) {
+  var amounts = [];
+  var re = /€(\d+)(?:,(\d{2}))?/g, m;
+  while ((m = re.exec(priceStr)) !== null) {
+    amounts.push(parseFloat(m[1]) + (m[2] ? parseFloat('0.' + m[2]) : 0));
+  }
+  if (!amounts.length) return null;
+  return {
+    min: amounts[0],
+    max: amounts[amounts.length - 1],
+    isRange: amounts.length > 1 || priceStr.indexOf('da') !== -1,
+    isPartial: priceStr.indexOf('+') !== -1
+  };
+}
+
+function updateBookingTotal() {
+  var wrap     = document.getElementById('booking-total-wrap');
+  var amountEl = document.getElementById('booking-total-amount');
+  var noteEl   = document.getElementById('booking-total-note');
+  if (!wrap) return;
+
+  var gender   = formGender ? formGender.toLowerCase() : '';
+  var services = SERVICES[gender] || [];
+  var totalMin = 0, totalMax = 0;
+  var hasRange = false, hasPartial = false, hasUnknown = false, hasAny = false;
+
+  rowIds.forEach(function(id) {
+    var el = document.getElementById('sval-' + id);
+    if (!el || !el.value) return;
+    hasAny = true;
+    var svc = services.filter(function(s) { return s.nome === el.value; })[0];
+    if (!svc) return;
+    var p = parseEuro(svc.prezzo);
+    if (!p) { hasUnknown = true; return; }
+    totalMin += p.min;
+    totalMax += p.max;
+    if (p.isRange)   hasRange   = true;
+    if (p.isPartial) hasPartial = true;
+  });
+
+  if (!hasAny) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+
+  var fmt = function(n) { return '€' + n.toFixed(2).replace('.', ','); };
+  var text, note = '';
+
+  if (hasUnknown && totalMin === 0) {
+    text = 'Prezzo da preventivo';
+  } else if (hasRange || hasPartial || hasUnknown) {
+    text = 'da ' + fmt(totalMin);
+    if (totalMax !== totalMin && !hasUnknown && !hasPartial) text += ' a ' + fmt(totalMax);
+    note = 'Stima sul prezzo minimo: alcuni servizi richiedono preventivo';
+  } else {
+    text = fmt(totalMin);
+  }
+
+  amountEl.textContent = text;
+  if (note) { noteEl.textContent = note; noteEl.style.display = 'block'; }
+  else       { noteEl.style.display = 'none'; }
+}
+
+function addServiceRow() {
+  // Save current selections before adding
+  var saved = rowIds.map(function(id) {
+    var el = document.getElementById('sval-' + id);
+    return el ? el.value : '';
+  });
+  saved.push('');
+  rowIds.push(rowCount++);
+  renderServiceRows(saved);
+}
+
+function removeRow(id) {
+  if (rowIds.length === 1) return;
+  var saved = rowIds.map(function(i) {
+    var el = document.getElementById('sval-' + i);
+    return el ? el.value : '';
+  });
+  var idx = rowIds.indexOf(id);
+  if (idx > -1) saved.splice(idx, 1);
+  rowIds = rowIds.filter(function(i) { return i !== id; });
+  renderServiceRows(saved);
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  var name   = document.getElementById('f-name').value.trim();
+  var gender = document.getElementById('f-gender').value;
+  var errEl  = document.getElementById('booking-error');
+  var chosen = rowIds
+    .map(function(id) { var el = document.getElementById('sval-' + id); return el ? el.value : ''; })
+    .filter(Boolean);
+
+  if (!name || !gender || chosen.length === 0) {
+    /* Errore in linea al posto dell'alert del browser: dice cosa manca */
+    var missing = !name ? 'il tuo nome' : !gender ? 'il sesso' : 'almeno un servizio';
+    errEl.textContent = 'Per continuare inserisci ' + missing + '.';
+    errEl.hidden = false;
+    var focusEl = !name ? document.getElementById('f-name')
+                : !gender ? document.getElementById('f-gender')
+                : document.querySelector('#services-container select');
+    if (focusEl) focusEl.focus();
+    return;
+  }
+  errEl.hidden = true;
+
+  var phone = gender === 'Donna' ? '393331355200' : '393381583431';
+  var intro = gender === 'Donna' ? 'sarei interessata' : 'sarei interessato';
+  var msg   = 'Ciao, sono ' + name + ',\n'
+    + intro + ' a prenotare un appuntamento per ' + chosen.join(', ')
+    + '\nPotrei sapere le vostre disponibilità?\nGrazie!';
+  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+/* ════════════════════════
+   ORARIO STATUS
+════════════════════════ */
+(function() {
+  var schedule = [
+    null,                        // 0 = domenica - chiuso
+    null,                        // 1 = lunedi - chiuso
+    { open: 9*60,  close: 19*60 }, // 2 = martedi
+    { open: 12*60, close: 21*60 }, // 3 = mercoledi
+    { open: 9*60,  close: 19*60 }, // 4 = giovedi
+    { open: 9*60,  close: 19*60 }, // 5 = venerdi
+    { open: 8*60,  close: 16*60 }  // 6 = sabato
+  ];
+
+  function render() {
+    var el = document.getElementById('orario-status');
+    if (!el) return;
+    var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
+    var day  = now.getDay();
+    var mins = now.getHours() * 60 + now.getMinutes();
+    var slot = schedule[day];
+
+    var dot, label, sub;
+    if (!slot) {
+      dot   = '#ef4444'; label = 'Chiuso ora'; sub = '';
+    } else if (mins < slot.open || mins >= slot.close) {
+      dot   = '#ef4444'; label = 'Chiuso ora';
+      if (mins < slot.open) { sub = 'Apre alle ' + pad(Math.floor(slot.open/60)) + ':' + pad(slot.open%60); }
+      else { sub = ''; }
+    } else if (mins >= slot.close - 60) {
+      dot   = '#eab308'; label = 'Chiude tra poco';
+      var diff = slot.close - mins;
+      sub = 'Chiude alle ' + pad(Math.floor(slot.close/60)) + ':' + pad(slot.close%60);
+    } else {
+      dot   = '#22c55e'; label = 'Aperto ora';
+      sub = 'Chiude alle ' + pad(Math.floor(slot.close/60)) + ':' + pad(slot.close%60);
+    }
+
+    var isOpen = label !== 'Chiuso ora';
+    el.innerHTML = '<div style="display:flex;align-items:center;gap:.55rem;">'
+      + '<span class="status-dot' + (isOpen ? ' is-open' : '') + '"></span>'
+      + '<span style="font-size:.88rem;font-weight:500;">' + label + '</span>'
+      + (sub ? '<span style="font-size:.82rem;opacity:.6;">' + sub + '</span>' : '')
+      + '</div>';
+
+    /* Evidenzia la riga di oggi nella tabella orari */
+    Array.prototype.forEach.call(document.querySelectorAll('#hours-list [data-day]'), function(n) {
+      n.classList.toggle('is-today', n.getAttribute('data-day') === String(day));
+    });
+  }
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  render();
+  setInterval(render, 30000);
+})();
+
+/* ── Init ── */
+loadServices();
+loadGallery();
+
+/* ════════════════════════
+   VIDEO HERO
+   - il video (16 MB) NON blocca più il caricamento: la sorgente viene
+     assegnata solo quando la pagina è pronta, sopra l'immagine già visibile
+   - non viene scaricato con risparmio dati attivo o movimento ridotto
+   - se va in errore resta l'immagine di sfondo (hero-bg rimane sotto)
+════════════════════════ */
+onPageReady(function() {
+  var v = document.getElementById('hero-video');
+  if (!v) return;
+  var conn = navigator.connection || {};
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (conn.saveData || reduce) return;
+  v.src = v.getAttribute('data-src');
+
+  var shown = false;
+  var fallbackTimer = null;
+
+  function showVideo() {
+    if (shown) return;
+    shown = true;
+    clearTimeout(fallbackTimer);
+    v.classList.add('ready');
+  }
+
+  /* Il browser ha abbastanza dati per partire → mostra video */
+  v.addEventListener('canplay', showVideo, { once: true });
+
+  /* Errore caricamento → nessuna azione, hero-bg rimane visibile */
+  v.addEventListener('error', function() {
+    clearTimeout(fallbackTimer);
+    v.style.display = 'none';
+  });
+
+  /* Connessione lenta: se dopo 6 s non si è ancora avviato,
+     lasciamo l'immagine di sfondo e proviamo comunque in background.
+     Quando arriverà canplay, il video scatterà comunque. */
+  fallbackTimer = setTimeout(function() {
+    if (!shown) {
+      /* Continua a tentare in background: quando sarà pronto comparirà */
+      v.addEventListener('canplay', showVideo, { once: true });
+    }
+  }, 6000);
+
+  /* Assicurati che il loop riparta immediatamente a fine video */
+  v.addEventListener('ended', function() {
+    v.currentTime = 0;
+    v.play().catch(function(){});
+  });
+
+  /* Tenta il play (necessario su alcuni browser mobili) */
+  v.play().catch(function(){});
+
+  /* Quando l'utente torna sulla pagina (es. da un'altra app sul telefono)
+     il browser sospende il video. Qui lo riprendiamo subito. */
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+      v.play().catch(function(){});
+    }
+  });
+});
+
+/* Banner cookie: caricato quando la pagina è pronta e il telo è salito */
+onPageReady(function() {
+  setTimeout(function() {
+    var s = document.createElement('script');
+    s.src = 'cookie-banner.js';
+    document.body.appendChild(s);
+  }, 1400);
+});
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     MODAL GALLERIA COMPLETA
+══════════════════════════════════════════════════ -->
+<div id="gallery-modal" role="dialog" aria-modal="true" aria-label="Galleria completa" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(13,13,13,.88);flex-direction:column;align-items:stretch;overflow:hidden;">
+
+  <!-- header fisso -->
+  <div style="background:#fafafa;padding:1rem 1.5rem;flex-shrink:0;border-bottom:1px solid rgba(13,13,13,.12);">
+    <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem 1rem;">
+
+      <!-- tab donna / uomo -->
+      <div class="seg seg-sm" id="modal-seg" data-active="0" role="group" aria-label="Scegli la galleria">
+        <button type="button" id="modal-tab-donna" aria-pressed="true"  onclick="setModalTab('donna')">Donna</button>
+        <button type="button" id="modal-tab-uomo"  aria-pressed="false" onclick="setModalTab('uomo')">Uomo</button>
+      </div>
+
+      <!-- contatore + sort -->
+      <div id="modal-header-info" class="flex items-center" style="gap:.6rem 1rem;flex:1;justify-content:center;flex-wrap:wrap;"></div>
+
+      <!-- chiudi -->
+      <button type="button" id="modal-close" onclick="closeGalleryModal()" class="btn btn-dark btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Chiudi
+      </button>
+    </div>
+  </div>
+
+  <!-- griglia scrollabile -->
+  <div style="flex:1;overflow-y:auto;padding:1.5rem;background:#fafafa;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div id="modal-gallery-grid"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* chiudi modal con tasto ESC */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeGalleryModal();
+});
+/* chiudi cliccando fuori dalla zona bianca (sul backdrop scuro) */
+document.getElementById('gallery-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeGalleryModal();
+});
+</script>
+</body>
+</html>
